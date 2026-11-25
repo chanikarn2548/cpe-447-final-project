@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffca32">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icon-pawtal.svg" type="image/svg+xml">
+  <title>Pawtal (พอลทัล) — ประตูเชื่อมเบาะแส พาสัตว์เลี้ยงกลับบ้าน</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pet-ui.css">
+  <link rel="stylesheet" href="readable-ui.css">
+</head>
+<body>
+  <header class="wrap topbar" id="top">
+    <a class="brand" href="#top"><span class="brand-icon">🐾</span><span>Pawtal<small>พอลทัล · ประตูเชื่อมเบาะแสสัตว์เลี้ยง</small></span></a>
+    <nav><a href="#cases">ประกาศหาย / พบ</a><a href="sources.html">แหล่งประกาศ 12 เว็บ</a><a href="detect.html">AI ตรวจจับ 5 ชนิด</a></nav>
+    <div class="top-actions"><button class="help-button" type="button" id="openAlertsBtn">🔔 แจ้งเตือน <span id="alertBadge" class="alert-badge" hidden>0</span></button><button class="help-button" type="button" data-show-welcome>วิธีใช้</button><button class="btn btn-light" data-action="register">ลงทะเบียนน้อง</button></div>
+  </header>
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow"><i></i> ค้นหาด้วยภาพ · เทียบประกาศอัตโนมัติ</span>
+        <h1>ตามหาสัตว์เลี้ยงหาย<br><span>เริ่มต้นง่ายๆ แค่ส่งรูปน้อง</span></h1>
+        <p>เพียงอัปโหลดรูปสัตว์เลี้ยง ระบบจะวิเคราะห์ลักษณะเด่นและค้นหาประกาศที่ใกล้เคียงจากเครือข่ายแจ้งหาย–พบให้อัตโนมัติ</p>
+        <div class="hero-buttons"><button class="btn btn-dark" data-action="lost">🔎 ค้นหาน้องจากรูป <span>→</span></button><button class="btn btn-light" data-action="found">📷 แจ้งพบสัตว์พลัดหลง</button></div>
+        <div class="trust"><span class="trust-paw">♡</span><small>ใช้งานฟรี · ไม่ต้องสมัครสมาชิก · ระบบช่วยวิเคราะห์และบันทึกให้อัตโนมัติ</small></div>
+      </div>
+      <div class="hero-visual">
+        <span class="hero-spark spark-one" aria-hidden="true">✦</span><span class="hero-spark spark-two" aria-hidden="true">✧</span>
+        <div class="hero-photo-frame"><img src="assets/hero-pets.jpg" alt="ภาพการ์ตูนสุนัขและแมววิ่งเข้าหาเจ้าของด้วยความคิดถึง"></div>
+        <div class="hero-message"><span>🐾</span><div><b>บ้านยังรอน้องอยู่เสมอ</b><small>ช่วยกันมอง ช่วยกันตาม ช่วยกันแชร์</small></div><i>♡</i></div>
+        <span class="hero-mini-label">FIND THEIR WAY HOME</span>
+      </div>
+    </section>
+
+    <section class="animal-picks" aria-labelledby="animalPickTitle">
+      <div class="animal-picks-heading"><div><h2 id="animalPickTitle">วันนี้กำลังตามหาใคร?</h2></div><small>เลือกสัตว์เลี้ยง 5 ชนิดที่ระบบรองรับ ♡</small></div>
+      <div class="animal-pick-grid">
+        <button class="animal-pick" data-action="lostspecies" data-species="dog"><span class="animal-art" aria-hidden="true">🐶</span><b>สุนัข</b></button>
+        <button class="animal-pick" data-action="lostspecies" data-species="cat"><span class="animal-art" aria-hidden="true">🐱</span><b>แมว</b></button>
+        <button class="animal-pick" data-action="lostspecies" data-species="bird"><span class="animal-art" aria-hidden="true">🐦</span><b>นก</b></button>
+        <button class="animal-pick" data-action="lostspecies" data-species="rabbit"><span class="animal-art" aria-hidden="true">🐰</span><b>กระต่าย</b></button>
+        <button class="animal-pick" data-action="lostspecies" data-species="hamster"><span class="animal-art" aria-hidden="true">🐹</span><b>แฮมสเตอร์</b></button>
+      </div>
+    </section>
+
+    <section class="quick-tools-strip" aria-label="ทางลัดเครื่องมือหลัก">
+      <button type="button" class="quick-tool-card gold" data-action="quickposter">
+        <span class="qt-icon" aria-hidden="true">🖼️</span>
+        <div><b>สร้างโปสเตอร์ QR แชร์ด่วน</b><small>ปรับธีมสี ใส่เบอร์/สินน้ำใจ โหลด .png พร้อมสแกน</small></div>
+      </button>
+      <button type="button" class="quick-tool-card sky" data-action="fbgroups">
+        <span class="qt-icon" aria-hidden="true">🔗</span>
+        <div><b>โซเชียล IG / X / กลุ่ม FB</b><small>ค้นข้ามแอป 1 คลิก หรือ Ctrl+V ภาพให้ AI เทียบ</small></div>
+      </button>
+      <button type="button" class="quick-tool-card rose" data-action="openalerts">
+        <span class="qt-icon" aria-hidden="true">🔔</span>
+        <div><b>ตั้งแจ้งเตือนประกาศใหม่</b><small>เฝ้ารอตามชนิดสัตว์และพื้นที่ พร้อม Webhook</small></div>
+      </button>
+      <button type="button" class="quick-tool-card mint" data-open-panel="tracking">
+        <span class="qt-icon" aria-hidden="true">📌</span>
+        <div><b>เบาะแส &amp; ทะเบียนน้อง</b><small>ดูไทม์ไลน์เบาะแสและเก็บรูปน้องหลายมุม</small></div>
+      </button>
+    </section>
+
+    <section class="section" id="cases">
+      <div class="section-heading"><div><h2>ประกาศสัตว์หายและพบสัตว์</h2><p>กดที่การ์ดเพื่อดูรายละเอียด แจ้งเบาะแส หรือเทียบภาพหาประกาศที่ใกล้เคียง</p></div><div class="section-head-actions"><div class="view-mode-switch" role="group" aria-label="สลับมุมมองประกาศ"><button type="button" class="view-btn active" data-case-view="grid">⊞ การ์ด</button><button type="button" class="view-btn" data-case-view="map">🗺️ แผนที่</button></div><button class="text-link" data-action="all">ดูทั้งหมด →</button></div></div>
+      <div class="filters"><button class="filter active" data-filter="all">ทั้งหมด</button><button class="filter" data-filter="lost">สัตว์หาย</button><button class="filter" data-filter="found">พบสัตว์</button><button class="filter" data-filter="resolved">กลับบ้านแล้ว</button></div>
+      <div class="case-search-options">
+        <label class="search-field-inline">คำค้นหา
+          <span class="search-input-wrap">
+            <input id="caseSearch" type="search" placeholder="เช่น แมวส้ม · ปลอกคอเขียว · ชื่อสัตว์" autocomplete="off">
+            <button type="button" id="clearSearch" class="clear-search-btn" aria-label="ล้างคำค้น">×</button>
+          </span>
+        </label>
+        <label>ชนิดสัตว์ <select id="speciesFilter"><option value="all">ทุกชนิด</option><option value="dog">สุนัข</option><option value="cat">แมว</option><option value="bird">นก</option><option value="rabbit">กระต่าย</option><option value="hamster">แฮมสเตอร์</option></select></label>
+        <label>พื้นที่ <input id="areaFilter" type="search" placeholder="เช่น อารีย์ / เชียงใหม่"></label>
+      </div>
+      <p id="caseResultCount" class="case-result-count" aria-live="polite"></p>
+      <div id="caseList" class="case-grid"></div>
+      <div id="caseMapContainer" hidden></div>
+      <div id="casePagination" class="case-pagination" style="display:flex;justify-content:center;align-items:center;gap:12px;margin-top:22px"></div>
+    </section>
+
+    <aside class="left-dock" id="sideDock" aria-label="เมนูลัดด้านซ้าย">
+      <div class="left-dock-handle" aria-hidden="true"><span>🐾</span><small>เมนู</small></div>
+      <nav class="left-dock-menu">
+        <button type="button" class="left-dock-item mint" data-open-panel="tracking" data-tip="ดูไทม์ไลน์เบาะแสที่บันทึกไว้ และลงทะเบียนโปรไฟล์สัตว์เลี้ยง"><span>📌</span><b>เบาะแส &amp; โปรไฟล์ <small id="trackingSummaryCount"></small></b></button>
+        <button type="button" class="left-dock-item sky" data-action="fbgroups" data-tip="ค้นข้ามแอป IG / X / TikTok / Threads, วางรูปโพสต์ (Ctrl+V) และรวมกลุ่ม Facebook ในระบบ"><span>🔗</span><b>โซเชียล &amp; กลุ่ม FB <small id="fbGroupCount"></small></b></button>
+        <button type="button" class="left-dock-item lavender" data-open-panel="flow" data-tip="รวมสไลด์ 24 หน้า, ห้องตรวจจับ AI 5 ชนิด, เบื้องหลังระบบ และเครื่องมือสำรองข้อมูล"><span>📖</span><b>โครงงาน &amp; สไลด์</b></button>
+      </nav>
+    </aside>
+
+    <div id="dockPanels" hidden>
+      <section class="section lower-section" id="tracking" style="margin:0">
+        <div id="trackingDrawer" class="tracking-drawer" style="border:0;background:transparent;padding:0;box-shadow:none">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button type="button" class="text-link" id="showTrackingGuide">❓ อ่านคำแนะนำการใช้งานส่วนนี้</button></div>
+          <div class="lower-grid">
+            <article class="panel"><div class="panel-head"><div><b>ไทม์ไลน์เบาะแสที่ติดตาม</b><small>รวมประกาศที่กดเก็บไว้ตรวจสอบ หรือเบาะแสที่มีคนแจ้งเข้ามา</small></div><button class="text-link" data-action="sighting" data-id="tungthong">＋ แจ้งเบาะแสใหม่</button></div><div id="sightings"></div><div class="share-strip"><span>สร้างข้อความประกาศพร้อมรูปสำหรับแชร์ต่อในโซเชียล</span><button class="btn btn-soft-green" data-action="share">↗ เตรียมข้อความแชร์</button></div></article>
+            <article class="panel"><div class="panel-head"><div><b>ทะเบียนสัตว์เลี้ยงของฉัน</b><small>เก็บรูปน้องหลายมุมไว้ล่วงหน้า หากหายกดสร้างประกาศได้ในคลิกเดียว</small></div><button class="text-link" data-action="register">＋ เพิ่มโปรไฟล์</button></div><div id="profiles"></div><div id="emptyProfile">ยังไม่มีโปรไฟล์สัตว์เลี้ยง<br>แนะนำให้เก็บรูปหน้าตรงและด้านข้างของน้องไว้ล่วงหน้า</div><button class="btn btn-light full" data-action="register">ลงทะเบียนสัตว์เลี้ยง</button></article>
+          </div>
+        </div>
+      </section>
+
+      <div class="project-info-drawer" id="flow" style="margin:0;border:0;background:transparent;padding:0;box-shadow:none">
+        <div class="drawer-body" id="ai" style="margin-top:0;padding-top:0;border-top:0">
+          <p id="publicSourceStatus" class="source-status drawer-status-pill" role="status">กำลังตรวจแหล่งประกาศ…</p>
+          <div class="drawer-links">
+            <a class="drawer-pill-btn primary" href="slides.html">📊 สไลด์นำเสนอโปรเจกต์ (24 หน้า · เจาะลึก AI, แหล่งประกาศ และ SQLite) →</a>
+            <a class="drawer-pill-btn" href="detect.html">🤖 ห้องตรวจจับ AI 5 ชนิด &amp; โซน 5 มุม →</a>
+          </div>
+          <details class="workspace-utilities" style="margin-top:12px"><summary>เครื่องมือจัดการข้อมูลและตัวกรองขั้นสูง</summary><div class="backup-actions"><button class="text-link" type="button" id="checkDatabaseStats">🗄️ ดูสถานะฐานข้อมูล SQLite &amp; ที่เก็บรูป</button><button class="text-link" id="exportTrainingPairs">ส่งออกคู่ภาพที่ตรวจสอบแล้ว (สำหรับพัฒนา AI)</button><button class="text-link" type="button" data-action="exportbackup">ดาวน์โหลดไฟล์สำรองข้อมูล (.json)</button><button class="text-link" type="button" data-action="importbackup">กู้คืนข้อมูลจากไฟล์</button></div><div class="case-workspace-tools"><label><input type="checkbox" id="hideDemo"> ซ่อนเคสตัวอย่าง</label><label><input type="checkbox" id="favoritesOnly"> ★ เฉพาะเคสโปรด</label><label>เรียงตาม <select id="caseSort"><option value="recent">เพิ่มล่าสุด</option><option value="name">ชื่อ ก–ฮ</option></select></label><button class="text-link" id="resetCaseFilters">ล้างตัวกรอง</button><button class="text-link" id="exportCaseCsv">ส่งออกตาราง CSV</button></div></details>
+          <p class="prototype-note" style="margin-top:10px"><span>● หมายเหตุ</span> คะแนนความคล้ายจากระบบช่วยคัดกรองภาพเบื้องต้น กรุณาตรวจสอบจุดสังเกตและพื้นที่จริงก่อนติดต่อ</p>
+        </div>
+      </div>
+    </div>
+  </main>
+  <nav class="bottom-nav" aria-label="เมนูหลัก">
+    <a href="#top"><span>🏠</span><small>หน้าหลัก</small></a>
+    <a href="#cases"><span>♡</span><small>ประกาศ</small></a>
+    <button class="bottom-add" data-action="found" aria-label="แจ้งพบสัตว์"><span>＋</span><small>แจ้งพบ</small></button>
+    <a href="sources.html"><span>🌐</span><small>12 เว็บประกาศ</small></a>
+    <button data-action="register"><span>♙</span><small>โปรไฟล์</small></button>
+  </nav>
+  <dialog id="dialog"><div class="dialog-head"><div><h3 id="dialogTitle"></h3><p id="dialogHint"></p></div><button class="close" data-close aria-label="ปิด">×</button></div><div class="dialog-body" id="dialogBody"></div></dialog>
+  <input id="backupFile" type="file" accept="application/json,.json" hidden>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog id="welcomeDialog" aria-labelledby="welcomeTitle" aria-describedby="welcomeDescription">
+    <div class="welcome-header"><button class="welcome-close" type="button" data-welcome="close" aria-label="ปิดคำแนะนำ">×</button><span class="welcome-icon" aria-hidden="true">🐾</span><h2 id="welcomeTitle">ยินดีต้อนรับสู่ “Pawtal (พอลทัล)”</h2><p id="welcomeDescription">ประตูเชื่อมเบาะแสสัตว์เลี้ยง · ค้นหาง่ายด้วยภาพถ่าย</p></div>
+    <div class="welcome-content">
+      <ol class="welcome-steps">
+        <li><span class="welcome-step-number">1</span><div><b>ส่งรูปน้อง 1–2 มุม (รองรับ 5 ชนิดสัตว์)</b><p>รองรับแมว สุนัข นก กระต่าย และแฮมสเตอร์ เพียงส่งรูปเข้ามา ระบบ AI จะสแกนชนิดสัตว์ ตัดฉากหลัง และวิเคราะห์สีขน–โครงหน้าให้อัตโนมัติ</p></div></li>
+        <li><span class="welcome-step-number">2</span><div><b>ค้นหารวมจากในเว็บ + 12 เว็บไซต์สาธารณะ &amp; กลุ่ม Facebook</b><p>เทียบภาพจากประกาศในระบบและ 12 เว็บไซต์ (JS100, FM91, Foundy, iFoundPet, Kwanma, PetHub Thai, PetFindHome, PetFinder PetFF, Pawsociety, Petio, BirdBack และ Pantip ห้องจตุจักร) แล้วเรียงภาพที่คล้ายที่สุดขึ้นมาก่อน</p></div></li>
+        <li><span class="welcome-step-number">3</span><div><b>เทียบภาพ 2 ฝั่ง เก็บเบาะแส และห้องตรวจจับ AI</b><p>กดดูรูปเทียบข้างกัน เช็กลิงก์ต้นทาง บันทึกไว้ในเมนู “เบาะแสของฉัน” หรือทดลองตีกรอบ 5 ชนิด &amp; โซน 5 มุมได้ที่หน้า “AI ตรวจจับ 5 ชนิด”</p></div></li>
+      </ol>
+      <p class="welcome-note"><b>ข้อควรรู้:</b> ระบบช่วยคัดกรองภาพที่คล้ายกันเพื่อให้คุณตรวจสอบได้เร็วขึ้น (แนะนำให้ตรวจจุดสังเกตและพื้นที่ประกอบกันอีกครั้ง)</p>
+      <p class="welcome-question">วันนี้คุณต้องการเริ่มต้นแบบไหน?</p>
+      <div class="welcome-choices"><button class="btn btn-dark" type="button" data-welcome="lost">🔎 สัตว์ฉันหาย — ค้นหาจากรูป</button><button class="btn btn-light" type="button" data-welcome="found">🐾 ฉันพบสัตว์ — แจ้งเบาะแส</button></div>
+      <div class="welcome-footer"><button type="button" data-welcome="close">เข้าดูหน้าเว็บก่อน</button><small>เปิดคำแนะนำนี้ซ้ำได้ที่ปุ่ม “วิธีใช้” ด้านบน</small></div>
+    </div>
+  </dialog>
+  <script src="case-data.js"></script>
+  <script src="app.js"></script>
+  <script src="matching.js"></script>
+  <script src="case-tools.js"></script>
+  <script src="welcome.js"></script>
+</body>
+</html>

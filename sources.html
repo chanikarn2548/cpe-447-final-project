@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffca32">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icon-pawtal.svg" type="image/svg+xml">
+  <title>แหล่งค้นหา · Pawtal (พอลทัล)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="readable-ui.css">
+  <link rel="stylesheet" href="sources.css">
+</head>
+<body>
+  <header class="wrap topbar" id="top">
+    <a class="brand" href="/"><span class="brand-icon">🐾</span><span>Pawtal<small>พอลทัล · ประตูเชื่อมเบาะแสสัตว์เลี้ยง</small></span></a>
+    <nav><a href="/#cases">ประกาศหาย / พบ</a><a href="/#tracking">เบาะแสของฉัน</a><a href="detect.html">AI ตรวจจับ 5 ชนิด</a></nav>
+    <div class="top-actions"><a class="btn btn-dark" href="/">🔎 เริ่มค้นหาจากรูป →</a></div>
+  </header>
+
+  <main class="source-wrap">
+    <header class="source-hero">
+      <div>
+        <span class="badge">🐾 Pawtal (พอลทัล) · ระบบเชื่อมแหล่งประกาศสาธารณะ</span>
+        <h1>เพิ่มโอกาสเจอน้อง<br>จากหลายแหล่งในที่เดียว</h1>
+        <p>เมื่อคุณอัปโหลดรูปในหน้าหลัก ระบบจะดึงประกาศล่าสุดจาก <b>12 เว็บไซต์สาธารณะที่เชื่อมไว้</b> (รวมโพสต์จากกลุ่ม Facebook ใน Pawsociety, ประกาศนกใน BirdBack และกระทู้ห้องจตุจักรใน Pantip) มาเปรียบเทียบด้วย AI อัตโนมัติ พร้อมช่องทางข่าว/ชุมชนและกลุ่ม Facebook ทั่วประเทศ</p>
+        <div class="source-hero-actions">
+          <a class="btn btn-dark" href="/">เริ่มค้นหาจากรูป →</a>
+          <a class="btn btn-light" href="detect.html">ไปหน้าตรวจจับ AI 5 ชนิด</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="source-note">
+      <b>การทำงานใน Flow หลัก:</b> แหล่งที่ติดป้าย <b>“เชื่อมกับ AI แล้ว”</b> จะถูกดึงภาพประกาศมาสกัดเวกเตอร์และจัดอันดับความคล้ายให้อัตโนมัติตอนค้นหารูป ส่วนแหล่งที่ระบุ <b>“เปิดค้นต่อ”</b> เป็นลิงก์อำนวยความสะดวกให้เปิดดูเพจ/กลุ่มเพิ่มเติมโดยตรง
+    </div>
+
+    <div class="source-controls">
+      <label for="sourceMode">กรองประเภทแหล่งข้อมูล</label>
+      <select id="sourceMode">
+        <option value="all">ทั้งหมด (ทุกช่องทาง &amp; กลุ่ม FB)</option>
+        <option value="auto">เชื่อมกับ AI อัตโนมัติใน Pawtal (12 เว็บ)</option>
+        <option value="manual">เว็บไซต์สำหรับเปิดค้นต่อ</option>
+        <option value="app">แอปและชุมชนโซเชียล</option>
+      </select>
+      <button id="refreshSources" class="btn btn-light">🔄 ตรวจการเชื่อมต่อจริงตอนนี้</button>
+    </div>
+
+    <p id="sourceSummary" role="status" aria-live="polite">กำลังโหลดรายชื่อ…</p>
+    <section id="sourceCards" class="source-grid" aria-label="รายชื่อแหล่งค้นหา"></section>
+
+    <footer>รายการล่าสุดมีจำนวนจำกัดและแคชประมาณ 10 นาที ยังไม่ครอบคลุมทุกโพสต์ย้อนหลัง ผลภาพคล้ายเป็นเบาะแสให้ตรวจสอบต่อ ไม่ใช่การยืนยันตัวสัตว์</footer>
+  </main>
+  <script src="sources.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,1247 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffca32">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icon-pawtal.svg" type="image/svg+xml">
+  <title>สไลด์นำเสนอโปรเจกต์ “Pawtal (พอลทัล)” — Project Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="readable-ui.css">
+  <style>
+    :root{
+      --plum-900:#3e2754;
+      --plum-700:#5c3d78;
+      --plum-500:#8460a6;
+      --gold-500:#f5b81d;
+      --gold-300:#ffe082;
+      --cream-50:#fffdf8;
+      --cream-100:#fdf6e7;
+      --ink-700:#463d30;
+      --ink-500:#7b6f5e;
+    }
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(255,213,94,.24) 0%, transparent 36%),
+        radial-gradient(circle at 88% 16%, rgba(169,130,214,.18) 0%, transparent 38%),
+        radial-gradient(circle at 50% 95%, rgba(110,201,152,.14) 0%, transparent 42%),
+        radial-gradient(#e6d7be 1px, transparent 1px) 0 0 / 26px 26px,
+        var(--cream-100);
+      color:var(--ink-700);
+      min-height:100vh;
+    }
+    .deck-wrap{max-width:1220px;margin:0 auto;padding:20px 22px 68px}
+    .deck-controls{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;
+      background:rgba(255,255,255,.82);backdrop-filter:blur(10px);
+      border:1.5px solid #efe4d2;border-radius:18px;padding:10px 14px;
+      box-shadow:0 8px 24px rgba(85,60,110,.06);
+    }
+    .deck-actions-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .slide-counter{
+      font-weight:700;color:var(--plum-700);
+      background:linear-gradient(135deg,#f4e9ff,#fff3cc);
+      border:1px solid #e3d1f7;padding:7px 16px;border-radius:99px;font-size:13.5px;
+      letter-spacing:.2px;
+    }
+    .slide-progress{
+      height:6px;background:#efe6d8;border-radius:99px;overflow:hidden;margin:0 4px 14px;
+      box-shadow:inset 0 1px 2px rgba(0,0,0,.06);
+    }
+    .slide-progress-fill{
+      height:100%;width:4.16%;border-radius:99px;
+      background:linear-gradient(90deg,#ffca32 0%,#f09d51 38%,#8a63b3 74%,#3ca374 100%);
+      transition:width .35s cubic-bezier(.22,1,.36,1);
+    }
+    .slide-dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+    .slide-dot{
+      border:1.5px solid #e7daf3;background:rgba(255,255,255,.92);color:#6e5585;
+      border-radius:99px;min-width:34px;height:30px;padding:0 10px;
+      font-size:12px;font-weight:700;cursor:pointer;transition:all .18s ease;
+    }
+    .slide-dot:hover{background:#f7efff;border-color:#c6a8e6;transform:translateY(-2px);box-shadow:0 4px 10px rgba(124,93,142,.14)}
+    .slide-dot.active{
+      background:linear-gradient(135deg,#6f4d8f,#8f67b5);border-color:#6f4d8f;color:#fff;
+      box-shadow:0 6px 14px rgba(111,77,143,.32);transform:translateY(-1px);
+    }
+
+    @keyframes slideIn{from{opacity:0;transform:translateY(16px) scale(.992)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes dashFlow{to{stroke-dashoffset:-24}}
+    @keyframes softFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+    .slide-card{
+      display:none;position:relative;overflow:hidden;
+      background:linear-gradient(180deg,#ffffff 0%,#fffefb 100%);
+      border:1.5px solid #e9dcc9;border-radius:30px;
+      padding:36px 42px 30px;min-height:600px;
+      box-shadow:0 24px 56px rgba(72,49,96,.10), 0 4px 12px rgba(72,49,96,.04);
+    }
+    .slide-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:7px;
+      background:linear-gradient(90deg,#ffca32 0%,#f4a261 32%,#8f67b5 68%,#3ca374 100%);
+    }
+    .slide-card::after{
+      content:'🐾';position:absolute;right:24px;bottom:44px;
+      font-size:92px;line-height:1;opacity:.045;pointer-events:none;transform:rotate(-14deg);
+    }
+    .slide-card.slide-cover,
+    .slide-card.slide-closing{
+      background:
+        radial-gradient(circle at 86% 24%, rgba(255,214,102,.32) 0%, transparent 44%),
+        radial-gradient(circle at 12% 84%, rgba(168,128,212,.18) 0%, transparent 45%),
+        linear-gradient(145deg,#fffef9 0%,#fff9e9 54%,#faf4ff 100%);
+    }
+    .slide-card.active{display:flex;flex-direction:column;gap:16px;animation:slideIn .26s cubic-bezier(.22,1,.36,1)}
+    .slide-card.active .info-box,
+    .slide-card.active .kpi-card,
+    .slide-card.active .svg-diagram-box,
+    .slide-card.active .slide-table,
+    .slide-card.active .proof-imgs,
+    .slide-card.active .shot-step-card,
+    .slide-card.active .species-why-card{animation:fadeUp .28s cubic-bezier(.22,1,.36,1) both}
+    .slide-card.active .kpi-card:nth-child(2),.slide-card.active .info-box:nth-child(2){animation-delay:.02s}
+    .slide-card.active .kpi-card:nth-child(3),.slide-card.active .info-box:nth-child(3){animation-delay:.04s}
+    .slide-card.active .kpi-card:nth-child(4){animation-delay:.06s}
+    .svg-flow-anim{stroke-dasharray:8 4;animation:dashFlow 1.3s linear infinite}
+
+    .slide-top-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;position:relative;z-index:1}
+    .slide-badge{
+      display:inline-flex;align-items:center;gap:7px;
+      background:linear-gradient(135deg,#ffe58f,#ffd24d);
+      color:#5a3f09;font-weight:700;font-size:13px;padding:6px 15px;border-radius:99px;
+      border:1px solid #f2c957;box-shadow:0 3px 10px rgba(235,180,35,.22);
+    }
+    .slide-badge::before{content:'✦';font-size:11px;color:#996900}
+    .slide-page-num{
+      font-size:12.5px;font-weight:700;color:#71578a;
+      background:#f4ecfc;border:1px solid #e3d3f4;padding:5px 13px;border-radius:99px;
+    }
+    .slide-card h1,.slide-card h2{
+      font-family:'Mitr','Prompt',Mali,sans-serif;font-weight:500;color:var(--plum-900);
+      margin:0;font-size:clamp(24px,2.85vw,34px);line-height:1.34;letter-spacing:-.2px;
+      position:relative;z-index:1;
+    }
+    .slide-card.slide-cover h1{
+      background:linear-gradient(135deg,#3e2754 0%,#7a499e 58%,#b37408 100%);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      font-weight:600;
+    }
+    .slide-card p,.slide-card li{font-size:15.2px;line-height:1.72;color:var(--ink-700)}
+    .slide-card ul,.slide-card ol{margin:6px 0 0;padding-left:20px;display:grid;gap:7px}
+    .slide-card li::marker{color:#9a72bd;font-weight:700}
+    .slide-card code{
+      background:#f3eafb;color:#5a377a;padding:1.5px 6px;border-radius:6px;
+      font-size:.88em;font-weight:600;border:1px solid #e5d5f6;
+    }
+    .slide-lead{font-size:17.5px!important;color:#62487a!important;font-weight:500;margin:0}
+
+    .cover-highlights{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+    .cover-pill{
+      display:inline-flex;align-items:center;gap:6px;
+      background:#fff;border:1.5px solid #ebdcb9;color:#573e70;
+      padding:6px 13px;border-radius:99px;font-size:13px;font-weight:600;
+      box-shadow:0 4px 12px rgba(95,65,120,.07);
+    }
+
+    .slide-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;position:relative;z-index:1}
+    .slide-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;position:relative;z-index:1}
+    .hero-slide-grid{display:grid;grid-template-columns:1.28fr .88fr;gap:28px;align-items:center;position:relative;z-index:1}
+    .hero-slide-img{
+      width:100%;max-height:360px;object-fit:cover;border-radius:26px;
+      border:6px solid #fff;outline:2px solid #f3d98d;
+      box-shadow:0 20px 44px rgba(96,67,120,.18);
+      animation:softFloat 4.8s ease-in-out infinite;
+    }
+    .cover-meta-box{
+      background:rgba(255,255,255,.86);backdrop-filter:blur(6px);
+      border:1.5px dashed #cbb0ea;border-radius:18px;padding:16px 20px;
+      display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;font-size:14.5px;color:#4f3864;
+      box-shadow:0 8px 20px rgba(105,72,140,.06);
+    }
+    .cover-meta-box div[contenteditable]{outline:none;border-bottom:1px dotted transparent;transition:.15s}
+    .cover-meta-box div[contenteditable]:hover{border-bottom-color:#bfa3dd}
+    .cover-meta-box div[contenteditable]:focus{border-bottom-color:#7c5d8e;background:#fff;border-radius:6px;padding:2px 6px}
+
+    .pet-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;position:relative;z-index:1}
+    .pet-chip{
+      background:#fff;border:1.5px solid #ede1ca;border-radius:18px;padding:8px;text-align:center;
+      box-shadow:0 6px 16px rgba(80,55,100,.06);transition:transform .2s ease,box-shadow .2s ease;
+    }
+    .pet-chip:hover{transform:translateY(-3px);box-shadow:0 12px 24px rgba(80,55,100,.12)}
+    .pet-chip img{width:100%;height:78px;object-fit:cover;border-radius:12px;display:block}
+    .pet-chip span{display:block;font-size:12.5px;font-weight:700;color:#523a68;margin-top:6px}
+
+    .species-why-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;position:relative;z-index:1}
+    .species-why-card{
+      border-radius:20px;padding:16px 13px;border:1.5px solid #eadecf;
+      display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;
+      box-shadow:0 8px 20px rgba(80,55,100,.06);transition:transform .2s ease;
+    }
+    .species-why-card:hover{transform:translateY(-3px)}
+    .species-emoji-badge{
+      width:68px;height:68px;border-radius:50%;display:grid;place-items:center;font-size:36px;
+      border:3px solid #fff;box-shadow:0 8px 18px rgba(80,55,100,.12);
+    }
+    .species-why-card h3{font-family:'Mitr','Prompt',sans-serif;font-size:17px;margin:2px 0 0;color:#4a3360}
+    .species-why-card small{font-size:11.5px;font-weight:700;color:#78618c;background:rgba(255,255,255,.75);padding:2px 9px;border-radius:99px}
+    .species-why-card p{font-size:13px;line-height:1.6;margin:0;color:#524638}
+
+    .info-box{
+      background:linear-gradient(180deg,#fffef9,#faf5ea);
+      border:1.5px solid #ebe0cc;border-left:4px solid #c9b592;
+      border-radius:20px;padding:18px 20px;
+      box-shadow:0 8px 20px rgba(82,58,104,.05);
+      transition:transform .2s ease,box-shadow .2s ease;
+      position:relative;z-index:1;
+    }
+    .info-box:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(82,58,104,.09)}
+    .info-box.pastel-yellow{background:linear-gradient(160deg,#fffef4,#fff7db);border-color:#f3db8f;border-left-color:#eab01e}
+    .info-box.pastel-mint{background:linear-gradient(160deg,#f7fdf9,#eaf8f0);border-color:#b8e3ca;border-left-color:#34a06c}
+    .info-box.pastel-pink{background:linear-gradient(160deg,#fff9fa,#ffedf1);border-color:#f2c1cb;border-left-color:#dc6678}
+    .info-box.pastel-purple{background:linear-gradient(160deg,#fbf8ff,#f2eaff);border-color:#d6c2f2;border-left-color:#8a63b3}
+    .info-box h3{font-family:'Mitr','Prompt',Mali,sans-serif;font-weight:500;font-size:17.5px;margin:0 0 8px;color:#4c3363}
+    .info-box p{margin:0;font-size:14.5px;line-height:1.68}
+    .model-tag{
+      display:inline-block;background:linear-gradient(135deg,#efe3fc,#fff1c9);
+      color:#5a3978;border:1px solid #dfd0f4;
+      font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:99px;margin-bottom:7px;
+    }
+
+    .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:1}
+    .kpi-card{
+      position:relative;overflow:hidden;
+      background:linear-gradient(155deg,#fffbf0 0%,#ffffff 62%,#f9f3ff 100%);
+      border:1.5px solid #efd998;border-radius:20px;padding:16px 14px 14px;text-align:center;
+      box-shadow:0 10px 22px rgba(105,74,125,.07);transition:transform .2s ease,box-shadow .2s ease;
+    }
+    .kpi-card::before{
+      content:'';position:absolute;top:0;left:24%;right:24%;height:4px;border-radius:0 0 6px 6px;
+      background:linear-gradient(90deg,#f5b81d,#8f67b5);
+    }
+    .kpi-card:hover{transform:translateY(-3px);box-shadow:0 14px 28px rgba(105,74,125,.12)}
+    .kpi-card b{
+      display:block;font-family:'Mitr','Prompt',sans-serif;font-size:clamp(22px,2.2vw,28px);font-weight:600;
+      background:linear-gradient(135deg,#573676,#9c660e);-webkit-background-clip:text;background-clip:text;color:transparent;
+      line-height:1.25;
+    }
+    .kpi-card small{display:block;margin-top:5px;font-size:12.5px;color:#675b4c;font-weight:500}
+
+    .slide-table{
+      width:100%;border-collapse:separate;border-spacing:0;font-size:14px;
+      border-radius:16px;overflow:hidden;border:1.5px solid #e7dbc7;
+      box-shadow:0 8px 20px rgba(80,55,100,.05);background:#fff;position:relative;z-index:1;
+    }
+    .slide-table th,.slide-table td{padding:10px 14px;border-bottom:1px solid #eee5d6;border-right:1px solid #f0e8da;text-align:left;vertical-align:middle}
+    .slide-table th:last-child,.slide-table td:last-child{border-right:none}
+    .slide-table tr:last-child td{border-bottom:none}
+    .slide-table th{background:linear-gradient(90deg,#fff2c2,#ffe69a);color:#523b0d;font-weight:700;font-size:13.8px}
+    .slide-table tbody tr:nth-child(even){background:#fdfaf4}
+    .slide-table tbody tr:hover{background:#fbf4ff}
+    .table-thumb{width:38px;height:38px;object-fit:cover;border-radius:10px;vertical-align:middle;margin-right:8px;border:1.5px solid #e5dac6;box-shadow:0 2px 6px rgba(0,0,0,.07)}
+
+    .proof-imgs{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;position:relative;z-index:1}
+    .proof-imgs figure{margin:0;background:#fffdf8;border:1.5px solid #e7dcc8;border-radius:18px;padding:12px;text-align:center;box-shadow:0 8px 20px rgba(80,55,100,.06)}
+    .proof-imgs img{width:100%;height:230px;object-fit:contain;background:#fff;border-radius:12px;border:1px solid #f0e7d8}
+    .proof-imgs figcaption{font-size:12.5px;color:#635645;margin-top:8px;font-weight:600}
+
+    .demo-shot{width:100%;height:255px;object-fit:cover;object-position:top;border-radius:14px;border:1.5px solid #e4d8c3;display:block;box-shadow:0 8px 20px rgba(70,50,90,.09)}
+    .shot-flow-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;position:relative;z-index:1}
+    .shot-step-card{
+      background:#fffdf8;border:1.5px solid #e8dcc7;border-radius:18px;padding:11px;
+      display:flex;flex-direction:column;gap:8px;
+      box-shadow:0 8px 20px rgba(80,55,100,.06);transition:transform .2s ease;
+    }
+    .shot-step-card:hover{transform:translateY(-3px)}
+    .shot-step-head{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#4f3566}
+    .shot-step-num{background:#7c5d8e;color:#fff;font-size:11.5px;padding:2.5px 9px;border-radius:99px}
+    .shot-step-card img{width:100%;height:245px;object-fit:contain;background:#fff;border-radius:12px;border:1px solid #e2d6c0}
+    .shot-step-card small{font-size:12px;line-height:1.55;color:#5c5041}
+    .sample-demo-box{
+      display:flex;gap:14px;align-items:center;
+      background:linear-gradient(135deg,#fffbf0,#f9f4ff);
+      border:1.5px solid #eed99c;border-radius:18px;padding:12px 16px;
+      box-shadow:0 8px 20px rgba(85,60,110,.06);position:relative;z-index:1;
+    }
+    .sample-demo-box img{width:72px;height:72px;object-fit:cover;border-radius:14px;border:2px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+    .svg-diagram-box{
+      background:linear-gradient(180deg,#fffefb,#faf6ee);
+      border:1.5px solid #e8dcc7;border-radius:22px;padding:14px;overflow:hidden;
+      box-shadow:0 8px 22px rgba(80,55,100,.06);position:relative;z-index:1;
+    }
+    .svg-diagram-box svg{width:100%;height:auto;display:block}
+    .slide-footer{
+      margin-top:auto;padding-top:12px;border-top:1.5px dashed #e9ddcc;
+      display:flex;justify-content:space-between;align-items:center;
+      font-size:12.5px;font-weight:500;color:#877867;position:relative;z-index:1;
+    }
+
+    :fullscreen .topbar{display:none}
+    :fullscreen .deck-wrap{max-width:1320px;padding:14px 24px}
+    :fullscreen .slide-card{min-height:calc(100vh - 150px)}
+
+    @media(max-width:920px){
+      .slide-card{padding:24px 20px;min-height:0}
+      .slide-grid-2,.slide-grid-3,.hero-slide-grid,.kpi-row,.proof-imgs,.pet-strip,.cover-meta-box,.species-why-grid,.shot-flow-grid{grid-template-columns:1fr}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .slide-card.active,.slide-card.active *,.hero-slide-img,.svg-flow-anim{animation:none!important}
+    }
+    @media print{
+      body{background:#fff}
+      .topbar,.deck-controls,.slide-dots,.slide-progress{display:none!important}
+      .deck-wrap{max-width:none;padding:0}
+      .slide-card{display:flex!important;box-shadow:none;border:1px solid #ddd;border-radius:16px;min-height:0;page-break-after:always;break-after:page;margin-bottom:20px;animation:none!important}
+      .slide-card::after{display:none}
+      .slide-card.slide-cover h1,.kpi-card b{color:#533969!important;background:none!important;-webkit-background-clip:initial!important}
+      .svg-flow-anim,.hero-slide-img{animation:none!important}
+    }
+  </style>
+</head>
+<body>
+  <header class="wrap topbar">
+    <a class="brand" href="/"><span class="brand-icon">🐾</span><span>Pawtal<small>พอลทัล · สไลด์นำเสนอโปรเจกต์</small></span></a>
+    <nav><a href="/">หน้าหลักค้นหา</a><a href="/#cases">ประกาศหาย / พบ</a><a href="sources.html">แหล่งประกาศ 12 เว็บ</a><a href="detect.html">AI ตรวจจับ 5 ชนิด</a></nav>
+    <div class="top-actions"><a class="btn btn-light" href="detect.html">ไปหน้าสาธิต AI →</a></div>
+  </header>
+
+  <main class="deck-wrap">
+    <div class="deck-controls">
+      <div class="deck-actions-right">
+        <button class="btn btn-light" type="button" id="prevSlide">← ก่อนหน้า</button>
+        <span class="slide-counter" id="slideIndicator">สไลด์ 1 / 25</span>
+        <button class="btn btn-dark" type="button" id="nextSlide">ถัดไป →</button>
+      </div>
+      <div class="deck-actions-right">
+        <button class="btn btn-light" type="button" id="toggleFullscreen">🖥️ เต็มจอ</button>
+        <button class="btn btn-soft-green" type="button" id="printSlides">🖨️ พิมพ์ / บันทึก PDF</button>
+      </div>
+    </div>
+
+    <div class="slide-progress" aria-hidden="true"><div class="slide-progress-fill" id="slideProgressFill"></div></div>
+    <div class="slide-dots" id="slideDots" aria-label="เลือกหน้าสไลด์"></div>
+
+    <!-- 1. COVER PAGE -->
+    <article class="slide-card slide-cover active">
+      <div class="slide-top-meta"><span class="slide-badge">สไลด์ปก (Cover Page)</span><span class="slide-page-num">หน้า 1 / 25</span></div>
+      <div class="hero-slide-grid" style="margin:auto 0">
+        <div style="display:flex;flex-direction:column;gap:15px">
+          <h1 style="font-size:clamp(32px,3.8vw,46px)">โปรเจกต์ “Pawtal (พอลทัล)”</h1>
+          <p class="slide-lead" style="font-size:19px!important">ระบบเว็บแอปพลิเคชันค้นหาและตรวจจับสัตว์เลี้ยงหาย 5 ชนิดด้วยภาพถ่ายและ AI</p>
+          <div class="cover-meta-box" style="padding:16px 20px;gap:10px 18px;font-size:15px">
+            <div contenteditable="true"><b>รายวิชา:</b> CPE447 – ระบบการรับภาพด้วยเครื่อง (Machine Vision System)</div>
+            <div contenteditable="true"><b>วันที่สอบโครงงาน:</b> 26 พฤศจิกายน 2569</div>
+            <div contenteditable="true" style="grid-column:1/-1"><b>สมาชิกกลุ่ม (3 คน):</b> ชนิกานต์ · ฟัยซล · พัชรินทร์ <i>(รายละเอียดหน้าที่ในหน้า 2)</i></div>
+          </div>
+        </div>
+        <img class="hero-slide-img" style="max-height:390px" src="assets/hero-pets.jpg" alt="ภาพประกอบ Pawtal สัตว์เลี้ยงกลับบ้าน">
+      </div>
+      <div class="slide-footer"><span>Pawtal (พอลทัล) · Project Presentation</span><span>กดลูกศร ← / → · Spacebar · Home / End เพื่อควบคุมสไลด์</span></div>
+    </article>
+
+    <!-- 2. TEAM MEMBERS & ROLES -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">สมาชิกผู้จัดทำและหน้าที่ความรับผิดชอบ</span><span class="slide-page-num">หน้า 2 / 25</span></div>
+      <h2>สมาชิกผู้จัดทำโครงงาน (3 คน) และหน้าที่รับผิดชอบ</h2>
+      <div class="slide-grid-3" style="gap:14px">
+        <div class="info-box pastel-mint">
+          <div style="font-size:13px;font-weight:700;color:#2f6c53;margin-bottom:4px">คนที่ 1 · Full-Stack &amp; UX Tools</div>
+          <h3 style="margin:0 0 6px;font-size:18px">ชนิกานต์ ขันทอง</h3>
+          <div style="font-size:13px;font-weight:700;color:#553c72;margin-bottom:8px">รหัส 66053250</div>
+          <ul>
+            <li>พัฒนา Backend API (<code>server.mjs</code>), ฐานข้อมูล <b>SQLite WAL</b> และ Media Storage</li>
+            <li>เชื่อมระบบดึงประกาศ <b>12 เว็บสาธารณะ + กลุ่ม Facebook</b> และเชื่อมโซเชียลข้ามแอป IG/X/TikTok</li>
+            <li>พัฒนาหน้าเว็บ UX, ซูมเทียบจุดตำหนิ, <b>สตูดิโอโปสเตอร์ QR (4:5 &amp; A4)</b> และระบบแจ้งเตือน</li>
+          </ul>
+        </div>
+        <div class="info-box pastel-lavender">
+          <div style="font-size:13px;font-weight:700;color:#5a3b82;margin-bottom:4px">คนที่ 2 · AI Matching &amp; OCR</div>
+          <h3 style="margin:0 0 6px;font-size:18px">ฟัยซล ขนาดผล</h3>
+          <div style="font-size:13px;font-weight:700;color:#553c72;margin-bottom:8px">รหัส 66055363</div>
+          <ul>
+            <li>พัฒนาระบบสกัดเวกเตอร์ภาพด้วย <b>DINOv2</b> &amp; <b>pet-base</b> และการครอปตัวสัตว์อัตโนมัติ</li>
+            <li>พัฒนาโมเดลจำแนกสายพันธุ์ (หมา–แมว–นก) และวิเคราะห์สี/ลายขน (<code>coat-tagging.mjs</code>)</li>
+            <li>จัดอันดับ <b>Hybrid Ranking</b> (ภาพ + ระยะทาง + เวลา) และระบบอ่านเบอร์/ป้าย <b>Tesseract OCR</b></li>
+          </ul>
+        </div>
+        <div class="info-box pastel-yellow">
+          <div style="font-size:13px;font-weight:700;color:#7a5612;margin-bottom:4px">คนที่ 3 · AI Object Detection</div>
+          <h3 style="margin:0 0 6px;font-size:18px">พัชรินทร์ เอมโอด</h3>
+          <div style="font-size:13px;font-weight:700;color:#553c72;margin-bottom:8px">รหัส 66012646</div>
+          <ul>
+            <li>เตรียมชุดข้อมูลสัตว์เลี้ยง 5 ชนิด (สุนัข, แมว, นก, กระต่าย, แฮมสเตอร์) และกำหนด Label</li>
+            <li>ทำ <b>Data Augmentation</b> และเทรนโมเดล <code>YOLO11n</code> บน <b>Google Colab</b> (<code>pets5.onnx</code>)</li>
+            <li>พัฒนาระบบตรวจจับ 5 ชนิด &amp; <b>Pentagon Detection Zone (5 มุม)</b> เช็ก <code>IN / OUT</code> (<code>detect.html</code>, <code>zone.js</code>)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="slide-footer"><span>CPE447 – Machine Vision System · สมาชิก 3 คน</span><span>แบ่งหน้าที่ตาม 3 เสาหลักของระบบจริง</span></div>
+    </article>
+
+    <!-- 2. PROJECT INTRO & 5 SPECIES -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">แนะนำโปรเจกต์ &amp; 5 ชนิดสัตว์เลี้ยง</span><span class="slide-page-num">หน้า 3 / 25</span></div>
+      <h2>ภาพรวม “Pawtal (พอลทัล)” และสัตว์เลี้ยง 5 ชนิดที่ระบบรองรับ</h2>
+      <div class="info-box pastel-yellow" style="padding:16px">
+        <p style="font-size:16px"><b>ประตูเชื่อมเบาะแสสัตว์เลี้ยง:</b> เพียงอัปโหลดรูปน้อง 1–2 มุม ระบบ AI จะช่วยระบุชนิดสัตว์ แยกสายพันธุ์ (<b>หมา–แมว 37 พันธุ์ · นก 24 สายพันธุ์</b>) ตัดฉากหลัง และเทียบหาประกาศที่หน้าตาคล้ายกันจาก <b>12 เว็บไซต์สาธารณะ + 31 กลุ่ม Facebook</b> ให้อัตโนมัติ</p>
+      </div>
+      <div class="pet-strip">
+        <div class="pet-chip"><img src="assets/samples/cat.jpg" style="height:105px" alt="แมว"><span>🐱 0: แมว (cat)</span></div>
+        <div class="pet-chip"><img src="assets/samples/dog.jpg" style="height:105px" alt="สุนัข"><span>🐶 1: สุนัข (dog)</span></div>
+        <div class="pet-chip"><img src="assets/samples/bird.jpg" style="height:105px" alt="นก"><span>🐦 2: นก (bird)</span></div>
+        <div class="pet-chip"><img src="assets/samples/rabbit.jpg" style="height:105px" alt="กระต่าย"><span>🐇 3: กระต่าย (rabbit)</span></div>
+        <div class="pet-chip"><img src="assets/samples/hamster.jpg" style="height:105px" alt="แฮมสเตอร์"><span>🐹 4: แฮมสเตอร์</span></div>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi-card"><b>5 ชนิด</b><small>วัตถุ AI + 37 พันธุ์หมาแมว + 24 พันธุ์นก</small></div>
+        <div class="kpi-card"><b>99.54%</b><small>จำแนก 5 ชนิด (ตีกรอบ mAP50 90.56%)</small></div>
+        <div class="kpi-card"><b>12 เว็บ</b><small>ดึงอัตโนมัติ + 31 กลุ่ม Facebook ในระบบ</small></div>
+        <div class="kpi-card"><b>78 / 78</b><small>Unit Tests + 20 Release Checks</small></div>
+      </div>
+      <div class="slide-footer"><span>แนะนำโปรเจกต์ · ภาพรวมความสามารถ</span><span>Pawtal (พอลทัล)</span></div>
+    </article>
+
+    <!-- 2. PROBLEM STATEMENT -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">1. ที่มาและความสำคัญ / ปัญหา</span><span class="slide-page-num">หน้า 4 / 25</span></div>
+      <h2>จุดเริ่มต้นและปัญหาที่ต้องการแก้ไข (Problem Statement)</h2>
+      <div class="slide-grid-3" style="grid-template-columns:1.1fr 1.1fr .75fr;align-items:stretch">
+        <div class="info-box pastel-pink">
+          <h3>ปัญหาหลักที่พบในปัจจุบัน</h3>
+          <ul>
+            <li><b>ประกาศกระจัดกระจาย:</b> ข้อมูลสัตว์หายกระจายอยู่หลายเพจและหลายเว็บ (JS100, FM91, พันทิป, กลุ่มสัตว์หาย–นกหาย) ต้องไล่ค้นหาทีละแหล่ง</li>
+            <li><b>ผู้พบสัตว์กรอกข้อมูลลำบาก:</b> ไม่ทราบชื่อ/สายพันธุ์ และไม่อยากกรอกแบบฟอร์มยาวๆ</li>
+            <li><b>ฉากหลังรบกวนการเทียบภาพ:</b> ภาพถ่ายมีพื้นหลัง โต๊ะ หรือข้อความป้าย ทำให้เทียบลักษณะผิดพลาด</li>
+          </ul>
+        </div>
+        <div class="info-box pastel-yellow">
+          <h3>แนวทางแก้ไขของ “Pawtal”</h3>
+          <ul>
+            <li><b>เริ่มต้นจากรูปภาพ 1–2 มุม:</b> ไม่ต้องกรอกฟอร์มยาว AI ช่วยระบุชนิด + สายพันธุ์ (หมา–แมว 37 พันธุ์ / นก 24 พันธุ์) ให้อัตโนมัติ</li>
+            <li><b>ตัดฉากหลังก่อนวิเคราะห์:</b> ใช้ Object Detection ตีกรอบเฉพาะตัวสัตว์เพื่อสกัดสีขนและโครงหน้า</li>
+            <li><b>รวมศูนย์การค้นหา:</b> เชื่อมต่อประกาศสาธารณะ <b>12 เว็บไซต์ + กลุ่ม Facebook 31 กลุ่ม</b> และจัดอันดับภาพที่คล้ายที่สุดในที่เดียว</li>
+          </ul>
+        </div>
+        <img src="assets/slide-problem.jpg" style="width:100%;height:100%;max-height:330px;object-fit:cover;border-radius:18px;border:3px solid #fff3cf;box-shadow:0 8px 20px rgba(80,55,100,.08)" alt="ภาพประกอบสวนหลังบ้านพาน้องกลับบ้าน">
+      </div>
+      <div class="slide-footer"><span>บทนำ · ที่มาและความสำคัญ</span><span>Problem → Solution</span></div>
+    </article>
+
+    <!-- 3. OBJECTIVES -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">2. วัตถุประสงค์ (Objectives)</span><span class="slide-page-num">หน้า 5 / 25</span></div>
+      <h2>วัตถุประสงค์ของโครงงาน (เป้าหมายที่วัดผลได้)</h2>
+      <div class="slide-grid-3">
+        <div class="info-box pastel-mint">
+          <h3>1. ตรวจจับสัตว์เลี้ยง 5 ชนิด</h3>
+          <p>พัฒนาและฝึกสอนโมเดล Object Detection (<code>YOLO11n v4</code>) ให้ตรวจจับ <b>แมว สุนัข นก กระต่าย แฮมสเตอร์</b> ด้วยค่า <code>mAP50 ≥ 85%</code> พร้อมตรวจพื้นที่ห้าเหลี่ยม 5 มุม (<code>IN/OUT</code>)</p>
+        </div>
+        <div class="info-box pastel-purple">
+          <h3>2. เทียบความคล้าย &amp; จำแนกสายพันธุ์</h3>
+          <p>ผสานลักษณะเด่น 4 สัญญาณ (โครงหน้า + โปรไฟล์สายพันธุ์ + ลวดลาย + สีขน) พร้อมหัวจำแนก <b>Residual Bottleneck MLP</b> เพื่อจัดอันดับภาพถ่ายและสายพันธุ์ได้แม่นยำ</p>
+        </div>
+        <div class="info-box pastel-yellow">
+          <h3>3. ใช้งานง่าย &amp; รวมแหล่งประกาศ</h3>
+          <p>สร้างเว็บแอปค้นหาในคลิกเดียว เชื่อมประกาศสาธารณะ <b>12 เว็บไซต์ + 31 กลุ่ม Facebook</b> และบันทึกถาวรด้วย <code>SQLite WAL</code> (9 ตาราง) + Media Store</p>
+        </div>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi-card"><b>5 คลาส</b><small>สัตว์เลี้ยงที่รองรับครบวงจร</small></div>
+        <div class="kpi-card"><b>90.56%</b><small>ทำได้จริง (เป้า mAP50 &gt; 85%)</small></div>
+        <div class="kpi-card"><b>12 เว็บ</b><small>เว็บประกาศสาธารณะ + 31 กลุ่ม FB</small></div>
+        <div class="kpi-card"><b>78 / 78</b><small>Unit Tests &amp; 20 Release Checks ผ่าน</small></div>
+      </div>
+      <div class="slide-footer"><span>วัตถุประสงค์ของโครงงาน</span><span>Measurable Goals</span></div>
+    </article>
+
+    <!-- 4. SCOPE -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">3. ขอบเขตของโปรเจกต์ (Scope)</span><span class="slide-page-num">หน้า 6 / 25</span></div>
+      <h2>ขอบเขตการทำงานของระบบ (ทำอะไรบ้าง / ไม่ทำอะไรบ้าง)</h2>
+      <div class="slide-grid-2">
+        <div class="info-box pastel-mint">
+          <h3>สิ่งที่ระบบทำ (In Scope)</h3>
+          <ul>
+            <li><b>ชนิดสัตว์ที่รองรับ:</b> เฉพาะ 5 ชนิด (แมว, สุนัข, นก, กระต่าย, แฮมสเตอร์)</li>
+            <li><b>การประมวลผลภาพ:</b> ตรวจจับตำแหน่ง, ระบุ 5 ชนิด (<code>99.54%</code>), แยกหมา–แมว 37 พันธุ์ (<code>96.08%</code>), นก 24 ชนิด (<code>89.17% TTA</code>) และเทียบสีขน/โครงหน้า</li>
+            <li><b>แหล่งประกาศ &amp; ชุมชน:</b> ดึงอัตโนมัติจาก <b>12 เว็บไซต์</b> (เพิ่ม BirdBack &amp; Pantip จตุจักร) + เชื่อม <b>กลุ่ม Facebook 31 กลุ่ม</b> จากรายชื่อช่องทางรวม 19 แหล่ง</li>
+            <li><b>พื้นที่เฝ้าระวัง:</b> กำหนดโซนห้าเหลี่ยม 5 มุมบนภาพนิ่ง/วิดีโอ/กล้องสด เช็ก <code>IN / OUT</code></li>
+            <li><b>การจัดเก็บ:</b> บันทึกข้อมูลและรูปภาพลง SQLite WAL (9 ตารางหลัก) + SHA-256 Media Store</li>
+          </ul>
+        </div>
+        <div class="info-box pastel-pink">
+          <h3>สิ่งที่อยู่นอกขอบเขต (Out of Scope)</h3>
+          <ul>
+            <li><b>ไม่ยืนยันตัวตน 100% อัตโนมัติ:</b> คะแนนจาก AI ใช้คัดกรองและจัดอันดับเบาะแส เจ้าของต้องตรวจสอบจุดสังเกตจริงประกอบ</li>
+            <li><b>ไม่สแกนกลุ่มปิด Facebook โดยพลการ:</b> หากไม่มี Meta Graph API Token จะไม่ล็อกอินสแกนกลุ่มปิด แต่ใช้กลุ่มสาธารณะผ่าน Pawsociety/Petio + ค้นกลุ่ม 31 กลุ่มและวางภาพ <code>Ctrl+V</code> แทน</li>
+            <li><b>ไม่รองรับสัตว์ป่า/สัตว์น้ำ:</b> โมเดลฝึกสอนเฉพาะสัตว์เลี้ยง 5 ชนิด และนก 24 สายพันธุ์ตามชุดข้อมูล</li>
+            <li><b>ไม่รวม GPS Hardware Tracking:</b> เน้นการจับคู่ภาพถ่ายเบาะแสและการเฝ้าระวังโซนจากภาพ/วิดีโอ</li>
+          </ul>
+        </div>
+      </div>
+      <div class="slide-footer"><span>ขอบเขตของโครงงาน</span><span>Clear Boundaries for Evaluation</span></div>
+    </article>
+
+    <!-- 5. WHY THESE 5 SPECIES -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">3.1 ที่มาของการเลือกสัตว์เลี้ยง 5 ชนิด (Why These 5 Species?)</span><span class="slide-page-num">หน้า 7 / 25</span></div>
+      <h2>ทำไมจึงเลือกสัตว์เลี้ยงทั้ง 5 ชนิดนี้มาเป็นกลุ่มตัวอย่างในโปรเจกต์?</h2>
+      <div class="species-why-grid">
+        <div class="species-why-card" style="background:#fff4f6;border-color:#f2c5ce">
+          <div class="species-emoji-badge" style="background:#ffe0e5">🐱</div>
+          <h3>แมว (Cat)</h3>
+          <small>Class 0</small>
+          <p>สัตว์เลี้ยงยอดนิยมในเมือง หลุดออกจากบ้าน/คอนโดบ่อย และมีสีขนคล้ายกันมาก (เช่น แมวส้ม) ต้องใช้ AI ช่วยแยกโครงหน้า</p>
+        </div>
+        <div class="species-why-card" style="background:#fffcf0;border-color:#f4dd93">
+          <div class="species-emoji-badge" style="background:#ffedc2">🐶</div>
+          <h3>สุนัข (Dog)</h3>
+          <small>Class 1</small>
+          <p>มักตกใจเสียงพลุ/ฟ้าร้องจนวิ่งเตลิดหาย พบในประกาศแจ้งหาย (JS100, FM91, มูลนิธิ) มากที่สุดคู่กับแมว</p>
+        </div>
+        <div class="species-why-card" style="background:#f2fbf6;border-color:#bde5ce">
+          <div class="species-emoji-badge" style="background:#d9f3e4">🐦</div>
+          <h3>นก (Bird)</h3>
+          <small>Class 2</small>
+          <p>สัตว์ปีกเลี้ยง (เช่น หงส์หยก เลิฟเบิร์ด) มักบินหลุดจากกรงและตัวเล็ก จึงต้องใช้ Object Detection ตัดฉากหลัง</p>
+        </div>
+        <div class="species-why-card" style="background:#f7f3ff;border-color:#d8c6f2">
+          <div class="species-emoji-badge" style="background:#e9defc">🐇</div>
+          <h3>กระต่าย (Rabbit)</h3>
+          <small>Class 3</small>
+          <p>Exotic Pet ยอดนิยมที่หลุดในสวน/หมู่บ้านบ่อย และรูปทรงในบางมุมคล้ายแมวเล็ก จึงต้องฝึก AI แยกคลาสให้ชัด</p>
+        </div>
+        <div class="species-why-card" style="background:#fff7f0;border-color:#f0cbb0">
+          <div class="species-emoji-badge" style="background:#ffe7d4">🐹</div>
+          <h3>แฮมสเตอร์</h3>
+          <small>Class 4 (Hamster)</small>
+          <p>ตัวแทนสัตว์ขนาดจิ๋วที่หลุดง่ายในบ้าน/หอพัก ใช้ทดสอบความสามารถการตรวจจับวัตถุขนาดเล็ก (Small Object)</p>
+        </div>
+      </div>
+      <div class="info-box pastel-yellow">
+        <p><b>แหล่งอ้างอิงเหตุผลการคัดเลือก 5 ชนิด:</b><br>
+        • <b>สุนัข &amp; แมว (อันดับ 1–2):</b> ข้อมูลจาก <b>ttb analytics (<code>ttbbank.com</code>) &amp; The 1 Insight</b> ชี้ว่าแมว (~63%) และสุนัข (~31%) ครองสัดส่วนตลาดสัตว์เลี้ยงสูงสุดในไทย (ตลาดรวม ~9.2 หมื่นล้านบาท)<br>
+        • <b>นก กระต่าย &amp; แฮมสเตอร์ (สัตว์เล็ก/Exotic):</b> ข้อมูลจาก <b>กรมพัฒนาธุรกิจการค้า (<code>dbd.go.th</code>)</b> ชี้ว่าเป็นกลุ่มที่เติบโตสูง (&gt;50%) ในกลุ่มคนเมือง/คอนโด พบแจ้งหลุดหายจริงใน <b>JS100 / FM91 / BirdBack</b> โดยกลุ่มนกมีสายพันธุ์เลี้ยงหลากหลายจึงพัฒนา AI แยกเฉพาะถึง <b>24 สายพันธุ์นก</b></p>
+      </div>
+      <div class="slide-footer"><span>ที่มาของกลุ่มตัวอย่าง 5 คลาส</span><span>Diverse Sizes, Shapes &amp; Real-World Frequency</span></div>
+    </article>
+
+    <!-- 5. EXPECTED BENEFITS -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">4. ประโยชน์ที่คาดว่าจะได้รับ (Expected Benefits)</span><span class="slide-page-num">หน้า 8 / 25</span></div>
+      <h2>ประโยชน์ที่คาดว่าจะได้รับจากการพัฒนาโปรเจกต์</h2>
+      <div class="slide-grid-3">
+        <div class="info-box pastel-yellow">
+          <h3>1. สำหรับเจ้าของสัตว์เลี้ยง</h3>
+          <ul>
+            <li><b>ลดเวลาค้นหา:</b> ใช้รูปถ่าย 1–2 มุมสแกนเทียบประกาศจาก <b>12 เว็บไซต์ + กลุ่ม Facebook</b> พร้อมกันในไม่กี่วินาที</li>
+            <li><b>เพิ่มโอกาสพบน้องกลับบ้าน:</b> คัดกรองเบาะแสที่หน้าตา สายพันธุ์ และสีขนใกล้เคียงขึ้นมาให้ตรวจสอบได้ทันที</li>
+            <li><b>เตรียมข้อมูลล่วงหน้า:</b> ลงทะเบียนโปรไฟล์สัตว์เลี้ยงไว้ใช้แจ้งหายได้ในคลิกเดียว</li>
+          </ul>
+        </div>
+        <div class="info-box pastel-mint">
+          <h3>2. สำหรับผู้พบสัตว์ &amp; ชุมชน</h3>
+          <ul>
+            <li><b>แจ้งพบได้ง่ายที่สุด:</b> ไม่ต้องทราบสายพันธุ์หรือกรอกฟอร์มยาว แค่ส่งรูปก็ช่วยระบุพันธุ์และเทียบหาเจ้าของได้</li>
+            <li><b>เชื่อมโยงเบาะแสเป็นระบบ:</b> เก็บประวัติการพบเห็น แจ้งเตือน Webhook และแชร์ต่อได้สะดวก</li>
+            <li><b>ประยุกต์ใช้เฝ้าระวังพื้นที่:</b> ตรวจจับสัตว์เข้า–ออกโซนห้าเหลี่ยมผ่านภาพ วิดีโอ และกล้องสดได้ชัดเจน</li>
+          </ul>
+        </div>
+        <div class="info-box pastel-purple">
+          <h3>3. ด้านวิชาการและเทคโนโลยี AI</h3>
+          <ul>
+            <li><b>ต้นแบบ Multi-Model Fusion:</b> ผสาน Object Detection + DINOv2 + Pet Recognition + Residual MLP + สีขน</li>
+            <li><b>ประมวลผลในเครื่องได้จริง:</b> รันโมเดล ONNX Runtime + Residual MLP บน Node.js CPU โดยไม่ต้องพึ่ง GPU ราคาแพง</li>
+            <li><b>ต่อยอดสู่ระบบจริงได้:</b> มีชุดข้อมูลฝึกคัดกรอง, SQLite 9 ตาราง และ Unit Tests 78 รายการพร้อมพัฒนาต่อ</li>
+          </ul>
+        </div>
+      </div>
+      <div class="slide-footer"><span>ประโยชน์ที่คาดว่าจะได้รับ</span><span>User · Community · Academic Impact</span></div>
+    </article>
+
+    <!-- 6. RELATED THEORY & AI MODELS -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">5. ทฤษฎีและเทคโนโลยีที่เกี่ยวข้อง (Related Tech &amp; AI Models)</span><span class="slide-page-num">หน้า 9 / 25</span></div>
+      <h2>ที่มาและบทบาทของโมเดล AI และอัลกอริทึมที่นำมาใช้</h2>
+      <div class="slide-grid-2">
+        <div class="info-box pastel-pink">
+          <span class="model-tag">YOLO11n v4 + RF-DETR → pet-crop.mjs</span>
+          <h3>1. <code>models/pets5.onnx</code> (Object Detection)</h3>
+          <p><b>ที่มา:</b> Fine-tune จาก <b>YOLO11n</b> (<code>640×640</code>) + จับคู่ <b>RF-DETR Nano</b> และ Solo Fallback<br>
+          <b>หน้าที่:</b> ตีกรอบ 5 ชนิดใน <code>/detect.html</code> (<b>mAP50 = 90.56%</b>, mAP50-95 = 72.52%) และครอปภาพเผื่อขอบ 3% (ครอปแม่น <b>43/50</b> · IoU50 = 100%)</p>
+        </div>
+        <div class="info-box pastel-mint">
+          <span class="model-tag">Meta AI DINOv2-small-q4 + Residual MLP</span>
+          <h3>2. <code>species5-v3</code> &amp; <code>bird24-v2</code> (<code>384-dim</code>)</h3>
+          <p><b>ที่มา:</b> <b>dinov2-small</b> (~16.9 MB) + หัวจำแนก <b>Residual Bottleneck MLP</b><br>
+          <b>หน้าที่:</b> แยก 5 ชนิดแม่นยำ <b>99.54%</b> (Blur <b>94.47%</b>) · แยกพันธุ์นก 24 ชนิดด้วย <b>5-Fold + Flip-TTA</b> แม่น <b>89.17%</b> (Top-3 <b>92.08%</b>)</p>
+        </div>
+        <div class="info-box pastel-purple">
+          <span class="model-tag">open-noodle/pet-recognition-base + Residual MLP</span>
+          <h3>3. <code>oxford37-v5</code> Breed Head (<code>512-dim</code>)</h3>
+          <p><b>ที่มา:</b> <b>pet-recognition-base</b> (~348 MB) + <b>5-Fold Residual MLP</b><br>
+          <b>หน้าที่:</b> สกัดโครงหน้าหมา–แมว และจำแนก 37 สายพันธุ์ แม่นยำ <b>96.08%</b> (Test 1,480) · <b>95.43%</b> (Remaining 2,189)</p>
+        </div>
+        <div class="info-box pastel-yellow">
+          <span class="model-tag">Custom Algorithms (Sharp &amp; Ray-Casting)</span>
+          <h3>4. 2D Gaussian Coat &amp; Ray-Casting Polygon</h3>
+          <p><b>ที่มา:</b> พัฒนาเองใน <code>server.mjs</code>, <code>classifier-head.mjs</code> และ <code>detect.js</code><br>
+          <b>หน้าที่:</b> สกัดสีขนกลางลำตัว (<code>96-dim</code>) + คำนวณจุด <code>(cx, cy)</code> ในเขตห้าเหลี่ยม 5 มุมบนภาพ/วิดีโอ/กล้อง</p>
+        </div>
+      </div>
+      <div class="slide-footer"><span>ทฤษฎีและเทคโนโลยีที่ใช้</span><span>100% Local ONNX + Residual MLP Inference</span></div>
+    </article>
+
+    <!-- 7. SYSTEM ARCHITECTURE & FLOW DIAGRAM (PART 1) -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">6. กรอบแนวคิด: Flowchart ขั้นตอนรับภาพและเตรียมข้อมูล</span><span class="slide-page-num">หน้า 10 / 25</span></div>
+      <h2>Flowchart 1: การรับรูปภาพ ระบุชนิดอัตโนมัติ และจัดเก็บฐานข้อมูล</h2>
+      <div class="svg-diagram-box" style="padding:10px">
+        <svg viewBox="0 0 1120 390" xmlns="http://www.w3.org/2000/svg" font-family="Prompt, sans-serif">
+          <defs>
+            <marker id="arrP" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#7c5d8e"/></marker>
+            <marker id="arrG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#2f8f5b"/></marker>
+            <marker id="arrR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#c94f5d"/></marker>
+          </defs>
+
+          <!-- Start Pill -->
+          <rect x="18" y="34" width="154" height="58" rx="29" fill="#ffdf85" stroke="#d9ae3b" stroke-width="2.2"/>
+          <text x="95" y="59" text-anchor="middle" font-size="14" font-weight="700" fill="#543b0c">เริ่มต้น (Start)</text>
+          <text x="95" y="78" text-anchor="middle" font-size="11.5" fill="#6b4e16">ผู้ใช้ส่งรูป 1–2 มุม</text>
+          <line class="svg-flow-anim" x1="172" y1="63" x2="212" y2="63" stroke="#7c5d8e" stroke-width="2.4" marker-end="url(#arrP)"/>
+
+          <!-- Step 1: Compress -->
+          <rect x="218" y="24" width="196" height="78" rx="14" fill="#fffaf0" stroke="#e6cfa0" stroke-width="2"/>
+          <text x="316" y="52" text-anchor="middle" font-size="14" font-weight="700" fill="#5e4315">บีบอัดภาพฝั่งเว็บ</text>
+          <text x="316" y="73" text-anchor="middle" font-size="12" fill="#705d3f">JPEG คุณภาพ 0.72 · ≤700px</text>
+          <text x="316" y="91" text-anchor="middle" font-size="11" fill="#8f784a">(app.js · compressedImage)</text>
+          <line class="svg-flow-anim" x1="414" y1="63" x2="462" y2="63" stroke="#7c5d8e" stroke-width="2.4" marker-end="url(#arrP)"/>
+
+          <!-- Decision Diamond 1: Species known? -->
+          <polygon points="560,12 652,63 560,114 468,63" fill="#f7f3ff" stroke="#8f67b0" stroke-width="2.2"/>
+          <text x="560" y="58" text-anchor="middle" font-size="13" font-weight="700" fill="#523570">ระบุชนิดสัตว์</text>
+          <text x="560" y="76" text-anchor="middle" font-size="12.5" font-weight="600" fill="#523570">มาด้วยหรือไม่?</text>
+
+          <!-- Branch NO (unknown) -> Auto Detect -->
+          <line class="svg-flow-anim" x1="560" y1="114" x2="560" y2="154" stroke="#2f8f5b" stroke-width="2.4" marker-end="url(#arrG)"/>
+          <rect x="498" y="122" width="124" height="20" rx="10" fill="#e6f7ed"/>
+          <text x="560" y="136" text-anchor="middle" font-size="11.5" font-weight="700" fill="#236b43">ไม่ระบุ (unknown)</text>
+
+          <rect x="436" y="160" width="248" height="84" rx="14" fill="#f2fbf6" stroke="#85cfa5" stroke-width="2"/>
+          <text x="560" y="187" text-anchor="middle" font-size="14" font-weight="700" fill="#215e3d">AI ระบุชนิดอัตโนมัติ (เบื้องหลัง)</text>
+          <text x="560" y="208" text-anchor="middle" font-size="12" fill="#3a6b50">POST /api/suggest-species</text>
+          <text x="560" y="227" text-anchor="middle" font-size="11.5" fill="#4e7a61">DINOv2 + species5-v3 Residual MLP (99.54%)</text>
+
+          <!-- Decision Diamond 2: Detect success? -->
+          <polygon points="560,270 644,316 560,362 476,316" fill="#fff4f6" stroke="#d4727f" stroke-width="2"/>
+          <text x="560" y="313" text-anchor="middle" font-size="12.5" font-weight="700" fill="#82313c">สแกนชนิด</text>
+          <text x="560" y="330" text-anchor="middle" font-size="12.5" font-weight="700" fill="#82313c">สำเร็จไหม?</text>
+          <line class="svg-flow-anim" x1="560" y1="244" x2="560" y2="266" stroke="#7c5d8e" stroke-width="2.2" marker-end="url(#arrP)"/>
+
+          <!-- Fallback if failed -->
+          <line class="svg-flow-anim" x1="476" y1="316" x2="365" y2="316" stroke="#c94f5d" stroke-width="2.2" marker-end="url(#arrR)"/>
+          <text x="422" y="308" text-anchor="middle" font-size="11.5" font-weight="700" fill="#a83b47">ไม่สำเร็จ</text>
+          <rect x="134" y="276" width="225" height="80" rx="14" fill="#fff4f6" stroke="#e8a7b0" stroke-width="2"/>
+          <text x="246" y="304" text-anchor="middle" font-size="13.5" font-weight="700" fill="#8c3b47">Fallback: identifyCaseForm</text>
+          <text x="246" y="325" text-anchor="middle" font-size="12" fill="#7b4a52">ให้ผู้ใช้ช่วยเลือกชนิดสัตว์เอง</text>
+          <text x="246" y="343" text-anchor="middle" font-size="11" fill="#94626a">(เฉพาะกรณีสแกนไม่สำเร็จ)</text>
+
+          <!-- Merge to Save Case -->
+          <line class="svg-flow-anim" x1="652" y1="63" x2="778" y2="63" stroke="#2f8f5b" stroke-width="2.4" marker-end="url(#arrG)"/>
+          <rect x="678" y="40" width="76" height="20" rx="10" fill="#e6f7ed"/>
+          <text x="716" y="54" text-anchor="middle" font-size="11.5" font-weight="700" fill="#236b43">ระบุแล้ว</text>
+
+          <path class="svg-flow-anim" d="M 644 316 L 882 316 L 882 118" stroke="#2f8f5b" stroke-width="2.4" fill="none" marker-end="url(#arrG)"/>
+          <text x="752" y="308" text-anchor="middle" font-size="11.5" font-weight="700" fill="#236b43">สำเร็จ (ได้ชนิด 1 ใน 5 คลาส)</text>
+
+          <!-- Save & Sync -->
+          <rect x="784" y="20" width="320" height="92" rx="16" fill="#eef6ff" stroke="#8fb8eb" stroke-width="2.2"/>
+          <text x="944" y="48" text-anchor="middle" font-size="14.5" font-weight="700" fill="#224973">บันทึกเคส &amp; ซิงก์ข้อมูลถาวร</text>
+          <text x="944" y="70" text-anchor="middle" font-size="12.5" fill="#3a5e85">1. localStorage (โหลดเร็วฝั่งเว็บ)</text>
+          <text x="944" y="90" text-anchor="middle" font-size="12.5" fill="#3a5e85">2. POST /api/database → SQLite WAL</text>
+
+          <!-- DB detail box -->
+          <rect x="784" y="142" width="320" height="122" rx="16" fill="#faf5ff" stroke="#ccb3eb" stroke-width="2" stroke-dasharray="5 4"/>
+          <text x="944" y="168" text-anchor="middle" font-size="13.5" font-weight="700" fill="#583c75">Storage Engine (storage.mjs)</text>
+          <text x="944" y="191" text-anchor="middle" font-size="12" fill="#695085">• 9 ตาราง SQLite (cases, alerts, fb_groups ฯลฯ)</text>
+          <text x="944" y="211" text-anchor="middle" font-size="12" fill="#695085">• แปลง Base64 → data/uploads/&lt;sha256&gt;.jpg</text>
+          <text x="944" y="231" text-anchor="middle" font-size="12" fill="#695085">• ป้องกันเก็บไฟล์ซ้ำด้วย SHA-256 Digest</text>
+          <text x="944" y="251" text-anchor="middle" font-size="11.5" font-weight="700" fill="#7c5d8e">↓ ส่งต่อเข้าสู่ Flowchart 2 (จับคู่ภาพอัตโนมัติ)</text>
+          <line class="svg-flow-anim" x1="980" y1="112" x2="980" y2="138" stroke="#7c5d8e" stroke-width="2.2" marker-end="url(#arrP)"/>
+        </svg>
+      </div>
+      <div class="slide-footer"><span>Flowchart 1 / 2 · Input, Auto-Species &amp; Storage</span><span>Simple UX on Top, Fault-Tolerant Fallbacks Inside</span></div>
+    </article>
+
+    <!-- 8. SYSTEM ARCHITECTURE & FLOW DIAGRAM (PART 2) -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">6. กรอบแนวคิด (ต่อ): Flowchart การค้นหาและจับคู่ภาพอัตโนมัติ</span><span class="slide-page-num">หน้า 11 / 25</span></div>
+      <h2>Flowchart 2: การจับคู่ภาพด้วย AI 12 เว็บไซต์ &amp; 31 กลุ่ม Facebook</h2>
+      <div class="svg-diagram-box" style="padding:10px">
+        <svg viewBox="0 0 1120 390" xmlns="http://www.w3.org/2000/svg" font-family="Prompt, sans-serif">
+          <defs>
+            <marker id="arrP2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#7c5d8e"/></marker>
+            <marker id="arrG2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#2f8f5b"/></marker>
+            <marker id="arrY2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#b5892b"/></marker>
+          </defs>
+
+          <!-- Parallel Split Node -->
+          <rect x="14" y="148" width="160" height="84" rx="16" fill="#7c5d8e"/>
+          <text x="94" y="178" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">เริ่มค้นหาคู่เทียบ</text>
+          <text x="94" y="199" text-anchor="middle" font-size="12" fill="#f2e6ff">รัน 2 สายงานพร้อมกัน</text>
+          <text x="94" y="217" text-anchor="middle" font-size="11.5" fill="#ffe494">(Promise.all Parallel)</text>
+
+          <path class="svg-flow-anim" d="M 174 176 L 210 176 L 210 82 L 248 82" stroke="#7c5d8e" stroke-width="2.4" fill="none" marker-end="url(#arrP2)"/>
+          <path class="svg-flow-anim" d="M 174 206 L 210 206 L 210 302 L 248 302" stroke="#b5892b" stroke-width="2.4" fill="none" marker-end="url(#arrY2)"/>
+
+          <!-- Branch A Top: Local AI Embed Pipeline -->
+          <rect x="254" y="18" width="224" height="122" rx="16" fill="#fff4f6" stroke="#f0bec7" stroke-width="2"/>
+          <text x="366" y="44" text-anchor="middle" font-size="13.5" font-weight="700" fill="#8c3b47">สาย A: ตรวจจับ &amp; ครอปภาพ</text>
+          <text x="366" y="66" text-anchor="middle" font-size="12" fill="#7b4a52">1. RF-DETR + YOLO11n v4</text>
+          <text x="366" y="85" text-anchor="middle" font-size="12" fill="#7b4a52">2. เลือกกรอบเดียว / Solo Fallback</text>
+          <text x="366" y="104" text-anchor="middle" font-size="12" fill="#7b4a52">3. ครอปตัวสัตว์ + เผื่อขอบ 3%</text>
+          <text x="366" y="123" text-anchor="middle" font-size="11.5" fill="#94626a">(pet-crop.mjs ตัดสิ่งรบกวน)</text>
+          <line class="svg-flow-anim" x1="478" y1="82" x2="522" y2="82" stroke="#7c5d8e" stroke-width="2.2" marker-end="url(#arrP2)"/>
+
+          <!-- Decision Diamond: Dog/Cat or Small Pet? -->
+          <polygon points="612,26 696,82 612,138 528,82" fill="#f7f3ff" stroke="#8f67b0" stroke-width="2.2"/>
+          <text x="612" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#523570">หมา / แมว</text>
+          <text x="612" y="96" text-anchor="middle" font-size="12.5" font-weight="600" fill="#523570">หรือไม่?</text>
+
+          <!-- Yes -> 512-dim Fusion -->
+          <line class="svg-flow-anim" x1="696" y1="62" x2="758" y2="62" stroke="#2f8f5b" stroke-width="2.2" marker-end="url(#arrG2)"/>
+          <text x="726" y="54" text-anchor="middle" font-size="11" font-weight="700" fill="#236b43">ใช่</text>
+          <rect x="764" y="16" width="212" height="72" rx="12" fill="#f2fbf6" stroke="#96dbb2" stroke-width="2"/>
+          <text x="870" y="42" text-anchor="middle" font-size="13" font-weight="700" fill="#215e3d">512-dim 4-Signal Fusion</text>
+          <text x="870" y="61" text-anchor="middle" font-size="11.5" fill="#3a6b50">pet-base+ox37v5+DINO+Coat</text>
+          <text x="870" y="78" text-anchor="middle" font-size="11" fill="#4e7a61">(เทียบเคส &amp; โปรไฟล์ในระบบ)</text>
+
+          <!-- No -> 384-dim DINOv2 -->
+          <line class="svg-flow-anim" x1="696" y1="106" x2="758" y2="128" stroke="#7c5d8e" stroke-width="2.2" marker-end="url(#arrP2)"/>
+          <text x="722" y="130" text-anchor="middle" font-size="11" font-weight="700" fill="#583c75">ไม่ใช่</text>
+          <rect x="764" y="96" width="212" height="62" rx="12" fill="#f7f3ff" stroke="#ccb3eb" stroke-width="2"/>
+          <text x="870" y="121" text-anchor="middle" font-size="13" font-weight="700" fill="#583c75">384-dim DINOv2 (+ Bird24)</text>
+          <text x="870" y="141" text-anchor="middle" font-size="11.5" fill="#6d4f8a">(นก 3-Signal · กระต่าย · แฮมสเตอร์)</text>
+
+          <!-- Branch B Bottom: 12 Websites + FB Groups -->
+          <rect x="254" y="242" width="246" height="122" rx="16" fill="#fffaf0" stroke="#e5cf99" stroke-width="2"/>
+          <text x="377" y="268" text-anchor="middle" font-size="13.5" font-weight="700" fill="#6b5018">สาย B: ดึง 12 เว็บ + 31 กลุ่ม FB</text>
+          <text x="377" y="290" text-anchor="middle" font-size="12" fill="#7a6232">POST /api/search-all</text>
+          <text x="377" y="310" text-anchor="middle" font-size="11" fill="#7a6232">JS100·FM91·Foundy·iFoundPet·Kwanma·Pantip</text>
+          <text x="377" y="330" text-anchor="middle" font-size="11" fill="#7a6232">PetHub·PetFindHome·PetFF·Pawsociety·Petio·BirdBack</text>
+          <text x="377" y="350" text-anchor="middle" font-size="11" fill="#917843">(แคช 10 นาที + ซิงก์โพสต์กลุ่ม Facebook)</text>
+          <line class="svg-flow-anim" x1="500" y1="302" x2="546" y2="302" stroke="#b5892b" stroke-width="2.2" marker-end="url(#arrY2)"/>
+
+          <rect x="552" y="242" width="214" height="122" rx="16" fill="#fffcf0" stroke="#f0d47d" stroke-width="2"/>
+          <text x="659" y="270" text-anchor="middle" font-size="13.5" font-weight="700" fill="#5e4315">กรอง &amp; จัดกลุ่มชนิด</text>
+          <text x="659" y="292" text-anchor="middle" font-size="12" fill="#6d5d43">• คัดเฉพาะชนิดเดียวกัน</text>
+          <text x="659" y="312" text-anchor="middle" font-size="12" fill="#6d5d43">• ตัดเคสปิด/หาบ้านออก</text>
+          <text x="659" y="332" text-anchor="middle" font-size="12" fill="#6d5d43">• ตัดซ้ำด้วย Canonical URL</text>
+          <text x="659" y="352" text-anchor="middle" font-size="11.5" fill="#8f784a">→ สกัดเวกเตอร์ทุกภาพ</text>
+          <line class="svg-flow-anim" x1="766" y1="302" x2="826" y2="255" stroke="#b5892b" stroke-width="2.2" marker-end="url(#arrY2)"/>
+
+          <!-- Merge into Final Ranking & User Action -->
+          <line class="svg-flow-anim" x1="976" y1="52" x2="1032" y2="148" stroke="#2f8f5b" stroke-width="2.2" marker-end="url(#arrG2)"/>
+          <line class="svg-flow-anim" x1="976" y1="127" x2="1012" y2="148" stroke="#7c5d8e" stroke-width="2.2" marker-end="url(#arrP2)"/>
+
+          <rect x="820" y="172" width="286" height="192" rx="18" fill="#eef6ff" stroke="#8fb8eb" stroke-width="2.2"/>
+          <text x="963" y="202" text-anchor="middle" font-size="14.5" font-weight="700" fill="#224973">รวมคะแนน &amp; แสดงผลให้ผู้ใช้</text>
+          <text x="963" y="226" text-anchor="middle" font-size="12.5" fill="#3a5e85">1. คำนวณ Cosine Similarity</text>
+          <text x="963" y="246" text-anchor="middle" font-size="12" fill="#4e6f94">(ถ้าอัปโหลด 2 มุม → ใช้ Mean Score)</text>
+          <text x="963" y="272" text-anchor="middle" font-size="12.5" fill="#3a5e85">2. แสดง Top-5 + กลุ่ม FB ที่ใกล้เคียง</text>
+          <text x="963" y="298" text-anchor="middle" font-size="12.5" fill="#3a5e85">3. กดเทียบรูป 2 ฝั่ง (matchReview)</text>
+          <text x="963" y="324" text-anchor="middle" font-size="12.5" font-weight="700" fill="#236b43">4. กด “เก็บเป็นเบาะแส” → SQLite</text>
+          <text x="963" y="346" text-anchor="middle" font-size="11.5" fill="#4e6f94">(ติดตามสถานะใน “เบาะแสของฉัน”)</text>
+        </svg>
+      </div>
+      <div class="slide-footer"><span>Flowchart 2 / 2 · Parallel Matching, Scraping &amp; Clue Saving</span><span>Local AI + 12 Auto Websites + 31 FB Groups</span></div>
+    </article>
+
+    <!-- 8. FEATURE FUSION DIAGRAM -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">6. กรอบแนวคิด (ต่อ): การผสานสัญญาณ AI</span><span class="slide-page-num">หน้า 12 / 25</span></div>
+      <h2>การรวม 4 สัญญาณเป็นเวกเตอร์ 512 มิติ (Feature Fusion Diagram)</h2>
+      <div class="svg-diagram-box">
+        <svg viewBox="0 0 1120 300" xmlns="http://www.w3.org/2000/svg" font-family="Prompt, sans-serif">
+          <defs>
+            <marker id="arrow5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#7c5d8e"/></marker>
+          </defs>
+          <rect x="14" y="88" width="186" height="120" rx="18" fill="#fff8de" stroke="#f0d47d" stroke-width="2.2"/>
+          <text x="107" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#5e4315">ภาพตัวสัตว์ที่ครอปแล้ว</text>
+          <text x="107" y="152" text-anchor="middle" font-size="12.5" fill="#7a6642">YOLO11n Crop + 3% pad</text>
+          <text x="107" y="174" text-anchor="middle" font-size="12" fill="#8f784a">ตัดฉากหลังรบกวนออก</text>
+
+          <path d="M 200 148 L 245 148 M 245 42 L 245 254" stroke="#7c5d8e" stroke-width="2.4" fill="none"/>
+          <line class="svg-flow-anim" x1="245" y1="42" x2="296" y2="42" stroke="#7c5d8e" stroke-width="2.4" marker-end="url(#arrow5)"/>
+          <line class="svg-flow-anim" x1="245" y1="112" x2="296" y2="112" stroke="#7c5d8e" stroke-width="2.4" marker-end="url(#arrow5)"/>
+          <line class="svg-flow-anim" x1="245" y1="184" x2="296" y2="184" stroke="#7c5d8e" stroke-width="2.4" marker-end="url(#arrow5)"/>
+          <line class="svg-flow-anim" x1="245" y1="254" x2="296" y2="254" stroke="#7c5d8e" stroke-width="2.4" marker-end="url(#arrow5)"/>
+
+          <rect x="302" y="14" width="445" height="54" rx="14" fill="#fff4f6" stroke="#f0bec7" stroke-width="2"/>
+          <text x="322" y="39" font-size="14.5" font-weight="700" fill="#8c3b47">35% · โครงหน้าและลักษณะเด่น (pet-recognition-base)</text>
+          <text x="322" y="57" font-size="12" fill="#825058">223 มิติ (L2-normalized × √0.35) · แยกเอกลักษณ์ใบหน้าสัตว์แต่ละตัว</text>
+
+          <rect x="302" y="85" width="445" height="54" rx="14" fill="#f7f3ff" stroke="#d2bef0" stroke-width="2"/>
+          <text x="322" y="110" font-size="14.5" font-weight="700" fill="#583c75">20% · โปรไฟล์ 37 สายพันธุ์ (oxford37-v5 · Residual MLP)</text>
+          <text x="322" y="128" font-size="12" fill="#684f82">37 มิติ (L2-normalized × √0.20) · แม่นยำ 96.08% Test / 98.99% Top-3</text>
+
+          <rect x="302" y="157" width="445" height="54" rx="14" fill="#f2fbf6" stroke="#b3e0c7" stroke-width="2"/>
+          <text x="322" y="182" font-size="14.5" font-weight="700" fill="#2c6349">15% · ลวดลาย &amp; พื้นผิวขน (DINOv2-small-q4)</text>
+          <text x="322" y="200" font-size="12" fill="#466e5a">156 มิติ (L2-normalized × √0.15) · รองรับมุมกล้องที่ต่างกัน</text>
+
+          <rect x="302" y="227" width="445" height="54" rx="14" fill="#fffcf0" stroke="#f0d47d" stroke-width="2"/>
+          <text x="322" y="252" font-size="14.5" font-weight="700" fill="#6b5018">30% · สีขนกลางลำตัว (2D Gaussian Coat Vector)</text>
+          <text x="322" y="270" font-size="12" fill="#7d6430">96 มิติ (L2-normalized × √0.30) · ป้องกันแมวส้มจับคู่ชนแมวดำ</text>
+
+          <line x1="747" y1="42" x2="798" y2="42" stroke="#7c5d8e" stroke-width="2.4"/>
+          <line x1="747" y1="112" x2="798" y2="112" stroke="#7c5d8e" stroke-width="2.4"/>
+          <line x1="747" y1="184" x2="798" y2="184" stroke="#7c5d8e" stroke-width="2.4"/>
+          <line x1="747" y1="254" x2="798" y2="254" stroke="#7c5d8e" stroke-width="2.4"/>
+          <path d="M 798 42 L 798 254" stroke="#7c5d8e" stroke-width="2.4" fill="none"/>
+          <line class="svg-flow-anim" x1="798" y1="148" x2="852" y2="148" stroke="#7c5d8e" stroke-width="2.6" marker-end="url(#arrow5)"/>
+
+          <rect x="858" y="76" width="248" height="144" rx="20" fill="#7c5d8e"/>
+          <text x="982" y="114" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">Unified 512-dim Vector</text>
+          <text x="982" y="140" text-anchor="middle" font-size="13" fill="#f7ebff">223 + 37 + 156 + 96 = 512</text>
+          <text x="982" y="168" text-anchor="middle" font-size="13" fill="#ffe494">เทียบ Cosine Similarity</text>
+          <text x="982" y="192" text-anchor="middle" font-size="12" fill="#f0e2ff">เรียงลำดับภาพที่คล้ายที่สุดขึ้นก่อน</text>
+        </svg>
+      </div>
+      <div class="info-box pastel-purple">
+        <p><b>Multi-View &amp; Bird 3-Signal Fusion:</b> หากอัปโหลด 2 มุม ระบบใช้ค่าเฉลี่ย Cosine Similarity (Mean Score) · ส่วน <b>นก</b> ใช้เวกเตอร์ 384 มิติผสาน <b>DINOv2 (45%) + โปรไฟล์ 24 สายพันธุ์นก <code>bird24-v2</code> (25%) + สีขนลำตัว (30%)</b></p>
+      </div>
+      <div class="slide-footer"><span>Multi-Signal Feature Fusion</span><span>512-dim (Cat/Dog) · 384-dim (Bird &amp; Small Pets)</span></div>
+    </article>
+
+    <!-- 12. DEEP DIVE: AI MODEL PIPELINE -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">6.1 เจาะลึกหลักการทำงานของโมเดล AI (Deep-Dive Pipeline)</span><span class="slide-page-num">หน้า 13 / 25</span></div>
+      <h2>หลักการทำงานเชิงลึกของโมเดล AI: จากภาพถ่ายสู่การจับคู่หลายสัญญาณ</h2>
+      <div class="slide-grid-2">
+        <div class="info-box pastel-pink">
+          <h3>ขั้นตอน 1–2: คัดกรองภาพและตัดพื้นหลัง</h3>
+          <ul>
+            <li><b>Image Quality Check (<code>image-quality.mjs</code>):</b> ตรวจสอบความละเอียด ความสว่างเฉลี่ย และความคมชัดก่อนประมวลผล พร้อมแนะนำเมื่อภาพมืดหรือเบลอ</li>
+            <li><b>Object Detection &amp; Crop (<code>pet-crop.mjs</code>):</b> ใช้ <code>RF-DETR Nano</code> + <code>YOLO11n v4</code> (<code>640×640</code>) ตีกรอบและครอปเผื่อขอบ <b>+3%</b> พร้อม Solo Fallback (ครอปแม่น <b>43/50</b> · IoU50 = 100%)</li>
+            <li><b>Auto-Species Fallback (<code>species5-v3</code>):</b> เมื่อผู้ใช้ไม่ระบุชนิด ระบบใช้ <code>DINOv2-small</code> + Residual MLP สแกนทาย 5 คลาสในเบื้องหลัง (<b>99.54%</b> · Blur <b>94.47%</b>)</li>
+          </ul>
+        </div>
+        <div class="info-box pastel-mint">
+          <h3>ขั้นตอน 3–4: Residual MLP &amp; Multi-View Cosine</h3>
+          <ul>
+            <li><b>สุนัข / แมว (512 มิติ):</b> ผสาน 4 สัญญาณ (โครงหน้า 35% + โปรไฟล์ 37 สายพันธุ์ <code>oxford37-v5</code> 20% + DINOv2 15% + สีขน 30%)</li>
+            <li><b>นก 24 สายพันธุ์ (384 มิติ):</b> ใช้ <code>bird24-v2</code> 5-Fold Residual MLP + Flip-TTA (<b>89.17%</b> · Top-3 <b>92.08%</b>) ผสานโปรไฟล์นก 25% + DINOv2 45% + สีขน 30%</li>
+            <li><b>Weighted Cosine &amp; 2-Angle Average:</b> รองรับรูป 1–2 มุมพร้อมกันด้วยการเฉลี่ยความคล้าย (Mean Similarity) โดยไม่รั่วข้อมูลข้ามชุดทดสอบ</li>
+          </ul>
+        </div>
+      </div>
+      <table class="slide-table" style="font-size:13px">
+        <thead><tr><th>คอมโพเนนต์ / รุ่นล่าสุด</th><th>สถาปัตยกรรม / ไฟล์</th><th>มิติ / ขนาด</th><th>บทบาทหลักและตัวชี้วัดจริงล่าสุด</th></tr></thead>
+        <tbody>
+          <tr><td><b>pets5.onnx (v4)</b></td><td>YOLO11n Fine-tuned + RF-DETR</td><td><code>640×640</code></td><td>ตรวจจับ &amp; ครอปสัตว์ 5 ชนิด (<code>mAP50 = 90.56%</code>, Recall <code>87.65%</code>, mAP50-95 <code>72.52%</code>)</td></tr>
+          <tr><td><b>species5-v3 &amp; bird24-v2</b></td><td>DINOv2-small + Residual MLP</td><td><code>384-dim</code> (~16.9 MB)</td><td>จำแนก 5 ชนิด (<code>99.54%</code>) · แยกพันธุ์นก 24 ชนิด (<code>89.17% TTA</code> · Top-3 <code>92.08%</code>)</td></tr>
+          <tr><td><b>oxford37-v5 (pet-base)</b></td><td>pet-recognition-base + 5-Fold MLP</td><td><code>512-dim</code> (~348 MB)</td><td>เอกลักษณ์ใบหน้า + 37 สายพันธุ์หมา–แมว (Test <code>96.08%</code> · Remaining <code>95.43%</code>)</td></tr>
+          <tr><td><b>2D Gaussian Coat</b></td><td>Custom Sharp Color Grid</td><td><code>96-dim</code> (30%)</td><td>ลดน้ำหนักขอบภาพ เน้นสีขน/ขนนกกลางลำตัว ป้องกันจับคู่ผิดสี</td></tr>
+        </tbody>
+      </table>
+      <div class="slide-footer"><span>Deep Dive · Quality Gate, Solo Crop, Residual MLP &amp; Flip-TTA</span><span>Zero Test-Set Leakage · Verified Metrics</span></div>
+    </article>
+
+    <!-- 13. DEEP DIVE: 12 PUBLIC SOURCES & 31 FACEBOOK GROUPS -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">6.2 สถาปัตยกรรมเชื่อม 12 เว็บประกาศ &amp; 31 กลุ่ม Facebook</span><span class="slide-page-num">หน้า 14 / 25</span></div>
+      <h2>การเชื่อม 12 เว็บไซต์ + 31 กลุ่ม Facebook การคัดกรอง และผลเช็กจริง</h2>
+      <div class="slide-grid-2" style="grid-template-columns:1.22fr .88fr;align-items:start">
+        <table class="slide-table" style="font-size:12.5px">
+          <thead><tr><th>แหล่งประกาศ (12 เว็บอัตโนมัติ + กลุ่ม FB)</th><th>กลไกการดึงข้อมูล</th><th>ผลเช็กสด*</th></tr></thead>
+          <tbody>
+            <tr><td><b>Pawsociety</b> (+ดึงโพสต์กลุ่ม Facebook)</td><td>Public RPC + Group Mirror (รวมกลุ่มนกหาย)</td><td><b>80</b> รายการ</td></tr>
+            <tr><td><b>PetFinder (PetFF)</b></td><td>SSR &amp; Next.js RSC (4 หน้า Lost+Found)</td><td><b>41</b> รายการ</td></tr>
+            <tr><td><b>Kwanma (ขวัญมา)</b></td><td>Cheerio SSR Maps (Lost + Found)</td><td><b>37</b> รายการ</td></tr>
+            <tr><td><b>BirdBack</b> (<code>tagme.love</code> · นกหายเฉพาะทาง)</td><td>HTML Scraper + กรองเคสปิด &amp; ลิงก์รูปแท้</td><td><b>31</b> รายการ</td></tr>
+            <tr><td><b>iFoundPet · FM91 · JS100 · Pantip จตุจักร</b></td><td>Web/News &amp; Forum Scraper + Isolated Timeout</td><td><b>55</b> รายการ (24+13+9+9)</td></tr>
+            <tr><td><b>Petio · PetFindHome · Foundy · PetHub + 31 กลุ่ม FB</b></td><td>ซิงก์รายชื่อกลุ่ม + ค้นกลุ่มด้วย AI + วางรูป <code>Ctrl+V</code></td><td><b>31</b> กลุ่ม FB ในระบบ</td></tr>
+          </tbody>
+        </table>
+        <div class="info-box pastel-yellow" style="display:flex;flex-direction:column;gap:8px">
+          <h3>ระบบคัดกรองและเชื่อมกลุ่มชุมชน</h3>
+          <ul style="font-size:13px">
+            <li><b>กรองเฉพาะเคสที่ยังเปิดอยู่:</b> ตัดประกาศ <i>“กลับบ้านแล้ว / พบเจ้าของแล้ว / หาบ้าน / กระทู้ถามทั่วไป / [AI]”</i> ออกอัตโนมัติ</li>
+            <li><b>กลุ่ม Facebook 31 กลุ่มในระบบ:</b> ดึงโพสต์สาธารณะอัตโนมัติผ่าน Pawsociety/Petio + มีส่วนแสดง <b>กลุ่ม Facebook ที่คล้าย</b> ท้ายผลค้นหา พร้อมปุ่มค้นหาตรงกลุ่มและ <code>Ctrl+V</code> วางภาพเข้า AI</li>
+            <li><b>Cache &amp; Concurrency:</b> แคชประกาศ 10 นาที ตัดซ้ำด้วย Canonical URL และแยก Error อิสระต่อเว็บ</li>
+          </ul>
+          <small style="color:#785d26">* ตรวจวัดจาก <code>check-release.mjs --online</code> ล่าสุด รวม <b>244 ประกาศสด</b> จากเว็บที่ตอบกลับ + 31 กลุ่ม FB (Foundy/PetHub อาจ timeout บางจังหวะ)</small>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Deep Dive · 12 Auto Websites + 31 Linked Facebook Groups</span><span>search-sources.mjs · additional-sources.mjs · fb-groups.mjs</span></div>
+    </article>
+
+    <!-- 14. DEEP DIVE: SQLITE WAL & MEDIA STORAGE -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">6.3 สถาปัตยกรรมฐานข้อมูลถาวร &amp; ที่เก็บรูปภาพ (SQLite WAL + SHA-256)</span><span class="slide-page-num">หน้า 15 / 25</span></div>
+      <h2>การออกแบบฐานข้อมูล SQLite โหมด WAL และ Media Storage แยกไฟล์ภาพ</h2>
+      <div class="slide-grid-2">
+        <div class="info-box pastel-purple">
+          <h3>ฐานข้อมูลเชิงสัมพันธ์ (<code>data/tamnong.sqlite</code>)</h3>
+          <p style="margin-bottom:8px">ใช้ <code>node:sqlite</code> เปิดโหมด <code>WAL (Write-Ahead Logging)</code> และ <code>PRAGMA foreign_keys = ON</code> แบ่งโครงสร้าง <b>9 ตารางหลัก</b>:</p>
+          <ul style="font-size:13px">
+            <li><b><code>cases</code> &amp; <code>sightings</code>:</b> เก็บประกาศสัตว์หาย/พบ และเบาะแสที่แจ้งหรือจับคู่ได้ เชื่อมด้วย <code>case_id</code></li>
+            <li><b><code>profiles</code>:</b> ทะเบียนสัตว์เลี้ยงของฉัน พร้อมรูปหลายมุม (<code>images_json</code>)</li>
+            <li><b><code>alerts</code> &amp; <code>alert_notifications</code>:</b> ตั้งเงื่อนไขแจ้งเตือนเคสใหม่รายชนิด/พื้นที่ + HTTPS Webhook</li>
+            <li><b><code>facebook_groups</code>:</b> เก็บ 31 กลุ่ม Facebook ในระบบ + กลุ่มที่ผู้ใช้เพิ่มหรือซิงก์จาก Petio</li>
+            <li><b><code>embedding_cache</code>, <code>activity_logs</code>, <code>app_meta</code>:</b> แคชเวกเตอร์, บันทึกสถานะ และเมตาเดตา</li>
+          </ul>
+        </div>
+        <div class="info-box pastel-mint">
+          <h3>Content-Addressable Media Store (<code>data/uploads/</code>)</h3>
+          <ul style="font-size:13.5px">
+            <li><b>แยกรูปออกจากตารางฐานข้อมูล:</b> แปลง Base64 เป็นไฟล์จริงใน <code>data/uploads/</code> เก็บเพียง URL พาธใน SQLite เพื่อให้ฐานข้อมูลเบาและค้นหาเร็ว</li>
+            <li><b>ป้องกันเก็บภาพซ้ำด้วย SHA-256:</b> ตั้งชื่อไฟล์จากแฮชเนื้อหาภาพ (<code>&lt;hash&gt;.jpg/.png</code>) รูปเดิมไม่บันทึกซ้ำ</li>
+            <li><b>ซิงก์ 2 ฝั่ง &amp; สำรองข้อมูล:</b> หน้าเว็บแคชผ่าน <code>localStorage</code> เพื่อเปิดเร็ว และซิงก์กับเซิร์ฟเวอร์ผ่าน <code>/api/database</code> พร้อมรองรับ <b>Export/Import JSON &amp; CSV</b></li>
+          </ul>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Deep Dive · 9-Table Relational Persistence &amp; SHA-256 Deduplication</span><span>storage.mjs · server.mjs</span></div>
+    </article>
+
+    <!-- 15. METHODOLOGY & DATASET -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">7. การเทรนโมเดล AI (Google Colab &amp; Data Augmentation)</span><span class="slide-page-num">หน้า 16 / 25</span></div>
+      <h2>การเทรนโมเดล AI บน Google Colab, Dataset และ Data Augmentation</h2>
+      <div class="slide-grid-2">
+        <div class="info-box pastel-yellow">
+          <h3>ขั้นตอนเตรียม Dataset &amp; Train บน Google Colab</h3>
+          <ol>
+            <li><b>Dataset &amp; การกำหนด Label (5 คลาส):</b> ใช้ชุดข้อมูลแยก Train / Val / Test อิสระ (<code>0: cat, 1: dog, 2: bird, 3: rabbit, 4: hamster</code>) — Detector <code>v4</code> (508 Train / 75 Val / 75 Test), Oxford-37 และ Bird24 (2,520 ภาพ)</li>
+            <li><b>Train บน Google Colab:</b> รันผ่านไฟล์ <code>training/train_pets5_openimages.ipynb</code> ด้วย GPU บน Colab เทรนโมเดล <code>YOLO11n</code> (ขนาดภาพ <code>640×640</code>) แล้วส่งออกเป็นไฟล์ <code>models/pets5.onnx</code></li>
+            <li><b>Data Augmentation:</b> ใช้เทคนิค <code>Mosaic</code>, <code>HSV Color Jitter</code>, <code>Horizontal Flip</code> และ <code>Scale/Crop</code> เพื่อเพิ่มความแม่นยำเมื่อเจอสภาพแสงและมุมกล้องจริง</li>
+            <li><b>อัปเกรด &amp; ทดสอบระบบ:</b> หัวจำแนก Residual Bottleneck MLP + รัน <b>84/84 Unit Tests</b> &amp; <b>22/22 Release Checks</b> ผ่านครบ (0 Errors)</li>
+          </ol>
+        </div>
+        <div class="proof-imgs" style="grid-template-columns:1fr 1fr;gap:10px">
+          <figure>
+            <img src="assets/training-proof/labels.jpg" style="height:175px" alt="ตัวอย่าง Dataset และการกำหนด Label 5 ชนิด">
+            <figcaption><b>Dataset &amp; Labels:</b> การกระจายตัวของกรอบ Bounding Box ทั้ง 5 คลาส</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/training-proof/train_batch0.jpg" style="height:175px" alt="ตัวอย่าง Data Augmentation ระหว่าง Train">
+            <figcaption><b>Data Augmentation:</b> ภาพจริงระหว่าง Train (Mosaic &amp; HSV Color)</figcaption>
+          </figure>
+        </div>
+      </div>
+      <div class="slide-footer"><span>การเทรนโมเดล AI (Google Colab)</span><span>YOLO11n (pets5.onnx) · 5 Classes · Mosaic &amp; HSV Augmentation</span></div>
+    </article>
+
+    <!-- 10. RESULTS: TRAINING & METRICS -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">8. ผลการดำเนินงาน: ผลเทรนและความแม่นยำทุกระบบ</span><span class="slide-page-num">หน้า 17 / 25</span></div>
+      <h2>ผลวัดประสิทธิภาพโมเดล AI ล่าสุด (Detector 5 ชนิด &amp; Classifiers ทั้ง 3 หัว)</h2>
+      <div class="slide-grid-2" style="align-items:center">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <table class="slide-table">
+            <thead><tr><th>ชนิดสัตว์ (Detector v4)</th><th>mAP50</th><th>Recall</th><th>5-Class MLP</th></tr></thead>
+            <tbody>
+              <tr><td><img class="table-thumb" src="assets/samples/cat.jpg" alt="แมว"><b>0: แมว</b></td><td><b>93.67%</b></td><td>88.30%</td><td rowspan="5" style="text-align:center;vertical-align:middle;background:#f7fdf9"><b>99.54%</b><br><small>Species5 v3 Test<br>(Blur 94.47%)</small></td></tr>
+              <tr><td><img class="table-thumb" src="assets/samples/dog.jpg" alt="สุนัข"><b>1: สุนัข</b></td><td><b>91.76%</b></td><td>83.28%</td></tr>
+              <tr><td><img class="table-thumb" src="assets/samples/bird.jpg" alt="นก"><b>2: นก</b></td><td><b>90.38%</b></td><td>86.67%</td></tr>
+              <tr><td><img class="table-thumb" src="assets/samples/rabbit.jpg" alt="กระต่าย"><b>3: กระต่าย</b></td><td><b>84.78%</b></td><td>86.67%</td></tr>
+              <tr><td><img class="table-thumb" src="assets/samples/hamster.jpg" alt="แฮมสเตอร์"><b>4: แฮมสเตอร์</b></td><td><b>92.18%</b></td><td>93.33%</td></tr>
+              <tr style="background:#fff6d6"><td><b>เฉลี่ย 5 ชนิด</b></td><td><b>90.56%</b></td><td><b>87.65%</b></td><td><b>mAP50-95: 72.52%</b></td></tr>
+            </tbody>
+          </table>
+          <div class="info-box pastel-purple" style="padding:10px 14px;font-size:13px">
+            <b>ผลแยกสายพันธุ์ล่าสุด (Residual MLP):</b>
+            หมา–แมว 37 พันธุ์ (<code>oxford37-v5</code>): <b>96.08%</b> Test (Top-3 98.99%) · นก 24 พันธุ์ (<code>bird24-v2</code>): <b>89.17%</b> TTA (เพิ่มจาก 82.50%, Top-3 92.08%) · ครอปภาพอัตโนมัติ: <b>43/50 (IoU50 = 100%)</b>
+          </div>
+        </div>
+        <div class="proof-imgs" style="grid-template-columns:1fr;gap:10px">
+          <figure>
+            <img src="assets/training-proof/results.png" style="height:150px" alt="กราฟผลการ Train">
+            <figcaption>Training Curves YOLO11n v4 (Loss ลดลงต่อเนื่อง, mAP50 สูงและเสถียร)</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/training-proof/confusion_matrix_normalized.png" style="height:150px" alt="Confusion Matrix">
+            <figcaption>Normalized Confusion Matrix ทั้ง 5 คลาส</figcaption>
+          </figure>
+        </div>
+      </div>
+      <div class="slide-footer"><span>ผลการดำเนินงาน · สถิติโมเดลทั้งหมด</span><span>Detector 90.56% · Species5 99.54% · Breed 96.08% · Bird 89.17%</span></div>
+    </article>
+
+    
+<!-- 16.5. BEFORE VS AFTER AI UPGRADE COMPARISON -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">8.1 ผลการพัฒนาโมเดล: เปรียบเทียบก่อน–หลัง (Before → After)</span><span class="slide-page-num">หน้า 18 / 25</span></div>
+      <h2>พัฒนาการความแม่นยำ AI ทั้ง 4 ระบบหลังอัปเกรดเป็น Residual MLP &amp; ขยายข้อมูล</h2>
+      <table class="slide-table" style="font-size:13.5px">
+        <thead>
+          <tr><th>ระบบ AI (รุ่นโมเดล)</th><th>เดิม (Baseline / Linear)</th><th>ล่าสุด (อัปเกรดแล้ว)</th><th>ผลที่วัดได้จริงบน Test Set</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>1. สายพันธุ์นก 24 ชนิด</b><br><small><code>bird24-v1 → v2</code> (DINOv2)</small></td><td>Linear บน 792 ภาพ<br>Test Crop: <code>82.50%</code></td><td>ขยาย <b>2,520 ภาพ</b> + 5-Fold Residual MLP + Flip-TTA</td><td><b>89.17% TTA</b> (<b>+6.67%</b>)<br>Top-3: <b>92.08%</b> · Loss ↓45%</td></tr>
+          <tr><td><b>2. สายพันธุ์หมา–แมว 37 พันธุ์</b><br><small><code>oxford37-v4 → v5</code> (pet-base)</small></td><td>Linear Head <code>v4</code><br>Test 1,480: <code>95.54%</code></td><td>5-Fold <b>Residual Bottleneck MLP</b> (<code>h=128</code>)</td><td><b>96.08%</b> Test (1,422/1,480)<br>Rem 2,189: <b>95.43%</b> (↑)</td></tr>
+          <tr><td><b>3. จำแนก 5 ชนิดสัตว์เลี้ยง</b><br><small><code>species5-v2 → v3</code> (DINOv2)</small></td><td>Linear Head <code>v2</code><br>Test: <code>99.08%</code> · Blur: <code>94.01%</code></td><td><b>Residual MLP</b> (<code>h=256</code>) + Noise &amp; Mixup</td><td><b>99.54%</b> Test (216/217)<br>Blur: <b>94.47%</b> · Top-3: <b>100%</b></td></tr>
+          <tr><td><b>4. ครอปตัวสัตว์อัตโนมัติ</b><br><small><code>pet-crop.mjs</code> (v4 + RF-DETR)</small></td><td>Threshold ตายตัว <code>0.65</code><br>Crop: <code>41 / 50</code> ภาพ</td><td>เพิ่ม <b>Solo Unambiguous Fallback</b> (<code>0.48+</code> เมื่อมี 1 ตัวชัด)</td><td><b>43 / 50</b> ภาพ (<b>IoU50 = 100%</b>)<br>คงความแม่นยำการันตีไม่เดามั่ว</td></tr>
+        </tbody>
+      </table>
+      <div class="slide-grid-2">
+        <div class="info-box pastel-mint">
+          <h3>ทำไม Residual Bottleneck MLP ถึงชนะ Linear เดิม?</h3>
+          <p>เพิ่มชั้นซ่อน (<code>Linear → LayerNorm → GELU → Linear</code>) บวกเส้นลัด <b>Skip Linear</b> ทำให้แยกเส้นแบ่งที่ไม่เป็นเชิงเส้นได้ดีขึ้น เช่น นกค็อกคาเทล/เลิฟเบิร์ดที่มีสีใกล้กัน หรือภาพเบลอโดยไม่เสียเสถียรภาพ</p>
+        </div>
+        <div class="info-box pastel-purple">
+          <h3>หลักการคัดเลือกแบบ Zero Test Leakage</h3>
+          <p>ทุกโมเดลคัดเลือกด้วย <b>Validation / 5-Fold Out-of-Fold (OOF)</b> เท่านั้น ไม่นำชุด Test มาจูนพารามิเตอร์ และยืนยันผล Parity ตรงกับ <code>PyTorch ↔ Node.js</code> (<code>maxDiff &lt; 10⁻⁶</code>) ทุกตัวก่อนเปิดใช้งานจริง</p>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Before vs After Evaluation</span><span>Verified across Bird24, Oxford37, Species5 &amp; Crop Benchmark</span></div>
+    </article>
+
+    <!-- 13. LIVE USAGE SCREENSHOT FLOW -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">8. ผลการดำเนินงาน: ตัวอย่างขั้นตอนการใช้งานจริง (Live Screenshot Flow)</span><span class="slide-page-num">หน้า 19 / 25</span></div>
+      <h2>ลำดับขั้นตอนการใช้งานจริง: ตั้งแต่ส่งรูปจนเจอประกาศที่คล้ายกัน (4 ขั้น)</h2>
+      <div class="shot-flow-grid">
+        <div class="shot-step-card" style="background:#fffcf0;border-color:#f4dd93">
+          <div class="shot-step-head"><span class="shot-step-num" style="background:#d99a2b">ขั้นที่ 1</span><span>เข้าหน้าแรก Pawtal</span></div>
+          <img src="assets/demo-home.png" alt="ขั้นที่ 1 หน้าแรก Pawtal เวอร์ชันล่าสุด">
+          <small>หน้าเว็บสะอาดตา กด <b>“🔎 ค้นหาน้องจากรูป”</b> หรือเปิด 31 กลุ่ม FB จากแถบเมนูลัดด้านซ้าย</small>
+        </div>
+        <div class="shot-step-card" style="background:#fff4f6;border-color:#f2c5ce">
+          <div class="shot-step-head"><span class="shot-step-num" style="background:#c95f6e">ขั้นที่ 2</span><span>ส่งรูปน้อง 1–2 มุม</span></div>
+          <img src="assets/demo-step2-upload.png" alt="ขั้นที่ 2 หน้าต่างส่งรูปค้นหา">
+          <small>อัปโหลดรูป (เช่น <b>แมวส้ม</b>) ไม่ต้องกรอกข้อมูลยาว แล้วกดสแกนค้นหาทันที</small>
+        </div>
+        <div class="shot-step-card" style="background:#f2fbf6;border-color:#bde5ce">
+          <div class="shot-step-head"><span class="shot-step-num" style="background:#3a875f">ขั้นที่ 3</span><span>AI จัดอันดับประกาศ</span></div>
+          <img src="assets/demo-step3-results.png" alt="ขั้นที่ 3 หน้าต่างผลลัพธ์จาก AI">
+          <small>AI ระบุชนิด–สายพันธุ์เบื้องหลัง + เทียบประกาศจาก <b>12 เว็บ &amp; กลุ่ม Facebook</b> เรียงความคล้ายให้ทันที</small>
+        </div>
+        <div class="shot-step-card" style="background:#f7f3ff;border-color:#d8c6f2">
+          <div class="shot-step-head"><span class="shot-step-num">ขั้นที่ 4</span><span>เทียบ 2 ฝั่ง &amp; เก็บเบาะแส</span></div>
+          <img src="assets/demo-step4-compare.png" alt="ขั้นที่ 4 หน้าต่างเทียบภาพซ้ายขวา">
+          <small>เปิดดูรูปคู่เทียบซ้าย–ขวา ลิงก์โพสต์ต้นทาง และกด <b>“เก็บเป็นเบาะแสของเคส”</b> ลง SQLite</small>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Live Walkthrough (Real Browser Captures)</span><span>1-Step Photo Upload → 12 Sites + FB Groups Match Review</span></div>
+    </article>
+
+    <!-- 14. RESULTS: SYSTEM DEMO & PENTAGON ZONE -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">8. ผลการดำเนินงาน (ต่อ): ชิ้นงานและการสาธิต</span><span class="slide-page-num">หน้า 20 / 25</span></div>
+      <h2>ห้องตรวจจับ AI 5 ชนิดโฉมใหม่ และระบบพื้นที่เฝ้าระวัง 5 มุม (Pentagon Zone)</h2>
+      <div class="slide-grid-2">
+        <div class="info-box pastel-yellow" style="padding:14px">
+          <h3>หน้าสาธิตจริง (<code>/detect.html</code> · แยกแท็บใช้งาน/สอน AI)</h3>
+          <img class="demo-shot" src="assets/demo-detect.png" style="object-fit:contain;background:#fff" alt="ภาพหน้าจอห้องตรวจจับ AI 5 ชนิดโฉมใหม่และพื้นที่ 5 มุม">
+        </div>
+        <div class="svg-diagram-box" style="padding:12px">
+          <h3 style="font-family:'Mitr','Prompt',sans-serif;font-size:17px;margin:0 0 8px;color:#5a3f72">พื้นที่ห้าเหลี่ยม 5 มุม (<code>/detect.html</code>)</h3>
+          <svg viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg" font-family="Prompt, sans-serif">
+            <rect x="8" y="8" width="504" height="234" rx="14" fill="#faf7ef" stroke="#e4dac8" stroke-width="1.5"/>
+            <polygon points="170,32 345,50 385,155 245,216 105,148" fill="#d9f5e6" fill-opacity="0.72" stroke="#2f8f5b" stroke-width="2.6"/>
+            <circle cx="170" cy="32" r="5" fill="#2f8f5b"/><text x="168" y="22" font-size="11" font-weight="700" fill="#246e46">P1</text>
+            <circle cx="345" cy="50" r="5" fill="#2f8f5b"/><text x="352" y="48" font-size="11" font-weight="700" fill="#246e46">P2</text>
+            <circle cx="385" cy="155" r="5" fill="#2f8f5b"/><text x="394" y="160" font-size="11" font-weight="700" fill="#246e46">P3</text>
+            <circle cx="245" cy="216" r="5" fill="#2f8f5b"/><text x="245" y="232" font-size="11" font-weight="700" fill="#246e46">P4</text>
+            <circle cx="105" cy="148" r="5" fill="#2f8f5b"/><text x="80" y="153" font-size="11" font-weight="700" fill="#246e46">P5</text>
+            <rect x="182" y="84" width="112" height="86" rx="8" fill="none" stroke="#1e824c" stroke-width="2.6"/>
+            <rect x="182" y="64" width="108" height="20" rx="5" fill="#1e824c"/>
+            <text x="189" y="78" font-size="11" font-weight="700" fill="#fff">แมว 55.1% · IN</text>
+            <circle cx="238" cy="127" r="4" fill="#1e824c"/>
+            <line class="svg-flow-anim" x1="238" y1="127" x2="494" y2="127" stroke="#7c5d8e" stroke-width="2"/>
+            <text x="438" y="118" text-anchor="middle" font-size="10.5" font-weight="600" fill="#6d4f82">Ray-Casting</text>
+            <rect x="402" y="170" width="92" height="58" rx="8" fill="none" stroke="#c93b47" stroke-width="2.6"/>
+            <rect x="402" y="150" width="84" height="20" rx="5" fill="#c93b47"/>
+            <text x="409" y="164" font-size="11" font-weight="700" fill="#fff">dog · OUT</text>
+          </svg>
+        </div>
+      </div>
+      <div class="sample-demo-box">
+        <img src="assets/samples/user-cat.jpg" alt="ตัวอย่างภาพแมวส้มทดสอบจริง">
+        <div>
+          <b>ผลทดสอบจริงกับภาพแมวส้ม (<code>user-cat.jpg</code>) &amp; ความสามารถล่าสุด</b>
+          <p style="margin:2px 0 0;font-size:13.5px">ตรวจพบ <code>แมว (55.4%)</code> สถานะ <b>IN</b> + ทายสายพันธุ์ (Bengal / Egyptian Mau / Russian Blue) + <b>🎨 สี/ลายขน (สีส้ม / ลายสลิด)</b> · เชื่อมปุ่มค้นหา 12 เว็บ, กล้องสด/วิดีโอ, แผนที่, OCR, LINE Bot และผ่าน Unit Tests <b>78/78</b> + Release Check <b>20/20</b></p>
+        </div>
+        <a class="btn btn-dark" style="margin-left:auto;flex-shrink:0" href="detect.html">เปิดสาธิต AI →</a>
+      </div>
+      <div class="slide-footer"><span>ผลการดำเนินงาน · ชิ้นงานและการสาธิต</span><span>Redesigned Detection Studio + Coat Tagging + 12-Site Search Bridge</span></div>
+    </article>
+
+    <!-- 14.5 PRODUCTION, OCR, LINE BOT & MOBILE UX UPGRADES -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">8.1 ยกระดับสู่ Production · OCR · LINE Bot &amp; Mobile UX</span><span class="slide-page-num">หน้า 21 / 25</span></div>
+      <h2>ฟีเจอร์พร้อมใช้งานจริง: โปสเตอร์ QR, ซูมปักหมุด, Hybrid, OCR, PWA &amp; LINE Bot</h2>
+      <div class="slide-grid-2">
+        <div class="info-box pastel-yellow" style="padding:12px">
+          <h3 style="margin:0 0 6px">Auto-Poster QR (<code>1080×1350</code> · ISO v3)</h3>
+          <img class="demo-shot" src="assets/demo-poster-qr.png" style="max-height:220px;object-fit:contain;background:#fff" alt="ตัวอย่างโปสเตอร์ประกาศสัตว์หายพร้อม QR Code">
+          <p style="margin:6px 0 0;font-size:12.5px">สร้างโปสเตอร์พร้อม <b>QR Code แท้</b> (Pure-JS Reed-Solomon) สแกนแล้วเด้งเข้า <code>/?case=&lt;id&gt;</code> เพื่อแจ้งเบาะแสได้ทันที</p>
+        </div>
+        <div class="info-box pastel-purple" style="padding:12px">
+          <h3 style="margin:0 0 6px">Side-by-Side Zoom (<code>1x–3x</code>) &amp; Landmark Pinning</h3>
+          <img class="demo-shot" src="assets/demo-zoom-pin.png" style="max-height:220px;object-fit:contain;background:#fff" alt="หน้าต่างซูมเทียบภาพซ้ายขวาพร้อมปักหมุดจุดตำหนิ">
+          <p style="margin:6px 0 0;font-size:12.5px">ซูมเทียบแผลเป็น สีตา ปลอกคอ ซ้าย–ขวา พร้อมปักหมุดเลขจุดสังเกตและป้าย <b>Hybrid ระยะทาง–เวลา</b></p>
+        </div>
+      </div>
+      <div class="slide-grid-3" style="margin-top:8px">
+        <div class="info-box pastel-mint" style="padding:12px">
+          <h3 style="font-size:15px">AI &amp; Search Intelligence</h3>
+          <p style="font-size:12.5px">• <b>Hybrid Re-ranking:</b> ภาพ + ระยะทาง Haversine + เวลา<br>• <b>Coat Tagging:</b> ส้ม-ขาว / สามสี / ทักซิโด้ / ลายสลิด<br>• <b>OCR (Tesseract):</b> ดึงเบอร์โทร–LINE–พื้นที่จากภาพ</p>
+        </div>
+        <div class="info-box pastel-yellow" style="padding:12px">
+          <h3 style="font-size:15px">Mobile UX &amp; Community</h3>
+          <p style="font-size:12.5px">• <b>PWA:</b> ติดตั้งลงมือถือได้ (<code>manifest.json</code> + <code>sw.js</code>)<br>• <b>กล้องมือถือทันที:</b> ปุ่ม <code>capture="environment"</code><br>• <b>LINE Bot Webhook:</b> <code>/api/line/webhook</code> + Flex Card</p>
+        </div>
+        <div class="info-box pastel-pink" style="padding:12px">
+          <h3 style="font-size:15px">Security &amp; Operations</h3>
+          <p style="font-size:12.5px">• <b>Owner PIN 4–6 หลัก:</b> แฮช <code>scrypt</code> กันลบ/แก้เคส<br>• <b>Rate Limiter + Magic Bytes:</b> กันยิงซ้ำ &amp; ไฟล์ปลอม<br>• <b>Background Worker:</b> อุ่นแคช 12 เว็บทุก 20 นาที</p>
+        </div>
+      </div>
+      <div class="slide-footer"><span>Production &amp; Mobile UX Upgrades</span><span>Auto-Poster QR · Zoom &amp; Pin · OCR · LINE Bot · PWA · Security</span></div>
+    </article>
+
+    <!-- 12. CONCLUSION & LIMITATIONS -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">9. สรุปผล และข้อจำกัด (Conclusion &amp; Limitations)</span><span class="slide-page-num">หน้า 22 / 25</span></div>
+      <h2>สรุปผลการบรรลุวัตถุประสงค์และข้อจำกัดของระบบ</h2>
+      <div class="slide-grid-2">
+        <div class="info-box pastel-mint">
+          <h3>สรุปผลการบรรลุวัตถุประสงค์</h3>
+          <ul>
+            <li><b>ตรวจจับ &amp; จำแนกแม่นยำขึ้นทั้งหมด:</b> Detector <code>mAP50 = 90.56%</code> · 5 ชนิด <b>99.54%</b> · หมา–แมว 37 พันธุ์ <b>96.08%</b> · นก 24 พันธุ์ <b>89.17%</b> TTA + จำแนกสี/ลายขนพันธุ์ผสม + OCR อ่านเบอร์โทร</li>
+            <li><b>ค้นหาแบบ Hybrid &amp; UX ใช้งานง่าย:</b> ผสานภาพ + ระยะทาง Haversine + เวลา, สร้างโปสเตอร์ QR, ซูมปักหมุด <code>1x–3x</code>, PWA กล้องมือถือ และ LINE Bot Webhook พร้อมต่อ Token</li>
+            <li><b>ความปลอดภัย &amp; ผ่าน QA เต็มระบบ:</b> เชื่อม <b>12 เว็บ + 31 กลุ่ม FB</b> + SQLite 9 ตาราง + Owner PIN + Rate Limit + Magic Bytes + Background Worker + ผ่าน <b>Unit Tests 78/78</b> และ <b>Release Check 20/20</b></li>
+          </ul>
+        </div>
+        <div class="info-box pastel-pink">
+          <h3>ข้อจำกัดที่พบ (Limitations)</h3>
+          <ul>
+            <li><b>สิทธิ์ API ภายนอก (Meta &amp; LINE OA):</b> ระบบสร้าง Webhook ของ LINE และตัวเชื่อม Facebook ไว้ครบแล้ว แต่การเปิดใช้งานจริงฝั่งกลุ่มปิด FB และบอท LINE ต้องใส่ Token/อนุมัติจากผู้ให้บริการภายนอก</li>
+            <li><b>การยืนยันตัวตนรายตัว:</b> คะแนนจาก AI ใช้คัดกรองเบาะแสและจำแนกพันธุ์เบื้องต้น ยังต้องอาศัยเจ้าของตรวจสอบจุดสังเกตจริง (ผ่านเครื่องมือ Zoom &amp; Pin) ประกอบ</li>
+            <li><b>คุณภาพและมุมภาพ:</b> ภาพมืดจัด เบลอหนัก หรือข้อความป้ายชื่อเล็กมากอาจลดความแม่นยำของ Detector และ OCR</li>
+          </ul>
+        </div>
+      </div>
+      <div class="slide-footer"><span>สรุปผลและข้อจำกัด</span><span>Objective &amp; Honest Verification</span></div>
+    </article>
+
+    <!-- 14. REFERENCES & SOURCES -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">9.1 แหล่งอ้างอิงและที่มาข้อมูล (References &amp; Sources)</span><span class="slide-page-num">หน้า 23 / 25</span></div>
+      <h2>แหล่งอ้างอิงโมเดล AI ชุดข้อมูล และเว็บไซต์ประกาศสาธารณะ</h2>
+      <div class="slide-grid-2">
+        <div class="info-box pastel-purple">
+          <h3>โมเดล AI ชุดข้อมูล และอ้างอิงสถิติ (Models &amp; Datasets)</h3>
+          <ul style="font-size:13px">
+            <li><b>Ultralytics YOLO11n &amp; RF-DETR:</b> <code>docs.ultralytics.com/models/yolo11</code> · <code>huggingface.co/open-noodle</code></li>
+            <li><b>Meta AI DINOv2-small-q4:</b> <code>huggingface.co/onnx-community/dinov2-small</code></li>
+            <li><b>Oxford-IIIT Pet (37 พันธุ์) &amp; OpenImages5:</b> <code>robots.ox.ac.uk/~vgg/data/pets</code></li>
+            <li><b>iNaturalist Bird24 (2,520 ภาพ 24 สายพันธุ์):</b> <code>api.inaturalist.org</code> (สังเกตการณ์นกระดับวิจัย &amp; นกเลี้ยงในไทย)</li>
+            <li><b>แหล่งอ้างอิงเหตุผล 5 ชนิดสัตว์:</b> <b>ttb analytics</b> (<code>ttbbank.com</code>), <b>The 1 Insight</b>, และ <b>กรมพัฒนาธุรกิจการค้า</b> (<code>dbd.go.th</code>)</li>
+          </ul>
+        </div>
+        <div class="info-box pastel-yellow">
+          <h3>แหล่งประกาศสาธารณะ 12 เว็บไซต์ &amp; เครื่องมือ</h3>
+          <ul style="font-size:13px">
+            <li><b>JS100 &amp; FM91:</b> <code>js100.com/en/site/lost_found</code> · <code>fm91bkk.com/lostandfound</code></li>
+            <li><b>Foundy &amp; iFoundPet:</b> <code>foundy.pet</code> · <code>ifoundpet.com</code></li>
+            <li><b>Kwanma, PetHub &amp; PetFindHome:</b> <code>kwanma.com</code> · <code>pethubthai.com</code> · <code>petfindhome.com</code></li>
+            <li><b>PetFinder, Pawsociety, Petio, BirdBack &amp; Pantip:</b> <code>petff.in.th</code> · <code>pawsociety.pet</code> · <code>petio.care</code> · <code>tagme.love</code> · <code>pantip.com/forum/jatujak</code></li>
+            <li><b>Runtime &amp; ML:</b> <code>Node.js</code>, <code>PyTorch CPU</code>, <code>onnxruntime-node</code>, <code>tesseract.js</code>, <code>node:sqlite</code>, <code>sharp</code>, <code>cheerio</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="slide-footer"><span>เอกสารอ้างอิงและแหล่งที่มา</span><span>Verified URLs, 12 Websites &amp; Open Datasets</span></div>
+    </article>
+
+    <!-- 17. FUTURE WORK -->
+    <article class="slide-card">
+      <div class="slide-top-meta"><span class="slide-badge">10. ข้อเสนอแนะและแผนพัฒนาต่อ (Future Work)</span><span class="slide-page-num">หน้า 24 / 25</span></div>
+      <h2>สิ่งที่พัฒนาแล้วในระบบ &amp; แนวทางขยายสู่การใช้งานสาธารณะ</h2>
+      <div class="slide-grid-3">
+        <div class="info-box pastel-mint">
+          <h3>✓ พัฒนาและทดสอบแล้วครบในระบบ</h3>
+          <p>Residual MLP ครบ 4 โมเดล, Hybrid Haversine + Recency, Coat Tagging, <b>OCR (Tesseract)</b>, <b>Auto-Poster QR</b>, Zoom &amp; Pin, PWA, Owner PIN, Rate Limit/Magic Bytes, Background Worker และ <b>LINE Bot Webhook</b></p>
+        </div>
+        <div class="info-box pastel-purple">
+          <h3>เปิดใช้งานจริง: LINE OA &amp; Cloud HTTPS</h3>
+          <p>ใส่ <code>LINE_CHANNEL_SECRET</code> / <code>LINE_CHANNEL_ACCESS_TOKEN</code> บนเซิร์ฟเวอร์ HTTPS เพื่อเปิดรับรูปและตอบ Flex Card ใน LINE Official Account รวมถึงติดตั้ง PWA และสแกน QR ข้ามอุปกรณ์ได้จริง</p>
+        </div>
+        <div class="info-box pastel-yellow">
+          <h3>ขยายข้อมูลภาคสนาม &amp; Meta App Review</h3>
+          <p>สะสมชุดภาพจับคู่รายตัวภาคสนาม (สัตว์พันธุ์ผสมไทย/ภาพกลางคืน 100+ เคสอิสระ) เพื่อเทรน Re-ID และยื่น <b>Meta App Review</b> เพื่ออ่านโพสต์กลุ่ม Facebook โดยตรง</p>
+        </div>
+      </div>
+      <div class="slide-footer"><span>ข้อเสนอแนะเพื่อการพัฒนาต่อ</span><span>Roadmap &amp; Production Activation</span></div>
+    </article>
+
+    <!-- 18. CLOSING & Q&A -->
+    <article class="slide-card slide-closing">
+      <div class="slide-top-meta"><span class="slide-badge">สไลด์จบ · ช่วงถาม–ตอบ (Q &amp; A)</span><span class="slide-page-num">หน้า 25 / 25</span></div>
+      <div class="hero-slide-grid" style="margin:auto 0">
+        <div class="info-box pastel-yellow" style="display:flex;flex-direction:column;justify-content:center;text-align:center;gap:14px;padding:32px 26px">
+          <div style="font-size:34px;line-height:1">🐾</div>
+          <h2 style="font-size:clamp(26px,3.1vw,36px);margin:0;color:#4a2f63">ขอบคุณคณะกรรมการและผู้ฟังทุกท่าน</h2>
+          <p style="font-size:17px;color:#664c7d;margin:0"><b>Q &amp; A · เปิดโอกาสให้ซักถามและสาธิตระบบจริง</b></p>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px">
+            <a class="btn btn-dark" href="/">เปิดหน้าค้นหาหลัก →</a>
+            <a class="btn btn-light" href="detect.html">สาธิตตรวจจับ AI →</a>
+          </div>
+        </div>
+        <img class="hero-slide-img" src="assets/slide-closing.jpg" alt="Pawtal น้องหมา แมว กระต่ายวิ่งกลับบ้านหาเจ้าของ">
+      </div>
+      <div class="slide-footer"><span>Thank You &amp; Q&amp;A</span><span>Pawtal (พอลทัล)</span></div>
+    </article>
+  
+</main>
+
+  <script>
+    const slides = [...document.querySelectorAll('.slide-card')];
+    const indicator = document.getElementById('slideIndicator');
+    const progressFill = document.getElementById('slideProgressFill');
+    const dotsBox = document.getElementById('slideDots');
+    let idx = 0;
+    slides.forEach((slide, i) => {
+      const num = slide.querySelector('.slide-page-num');
+      if (num) num.textContent = `หน้า ${i + 1} / ${slides.length}`;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'slide-dot' + (i === 0 ? ' active' : '');
+      btn.textContent = String(i + 1);
+      const badgeText = slide.querySelector('.slide-badge')?.textContent?.trim();
+      btn.title = badgeText ? `หน้า ${i + 1}: ${badgeText}` : `ไปสไลด์ ${i + 1}`;
+      btn.onclick = () => show(i);
+      dotsBox.appendChild(btn);
+    });
+    const dots = [...dotsBox.querySelectorAll('.slide-dot')];
+    function show(n) {
+      idx = (n + slides.length) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      indicator.textContent = `สไลด์ ${idx + 1} / ${slides.length}`;
+      if (progressFill) progressFill.style.width = `${((idx + 1) / slides.length) * 100}%`;
+    }
+    show(0);
+    document.getElementById('prevSlide').onclick = () => show(idx - 1);
+    document.getElementById('nextSlide').onclick = () => show(idx + 1);
+    document.getElementById('printSlides').onclick = () => window.print();
+    document.getElementById('toggleFullscreen').onclick = () => {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    };
+    window.addEventListener('keydown', e => {
+      if (e.target.isContentEditable) return;
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); show(idx + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); show(idx - 1); }
+      if (e.key === 'Home') { e.preventDefault(); show(0); }
+      if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+    });
+  </script>
+</body>
+</html>

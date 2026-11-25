@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createResidualTransform} from '../residual-transform.mjs';
+const head=()=>({format:'residual-512',species:'cat',rank:16,a:Array(8192).fill(0),b:Array(8192).fill(0)});
+test('zero residual preserves normalized embedding',()=>{const x=Array.from({length:512},(_,i)=>Math.sin(i)),y=createResidualTransform(head())(x),norm=Math.hypot(...x);for(let i=0;i<512;i++)assert.ok(Math.abs(y[i]-x[i]/norm)<1e-12);});
+test('matrix orientation agrees with a hand-calculated residual',()=>{const h=head();h.a[0]=1;h.b[16]=.5;const x=Array(512).fill(0);x[0]=1;const y=createResidualTransform(h)(x);assert.ok(Math.abs(y[0]-1/Math.sqrt(1.25))<1e-12);assert.ok(Math.abs(y[1]-.5/Math.sqrt(1.25))<1e-12);assert.equal(y[2],0);});
+test('rejects corrupt weights, mismatched species and unusable vectors',()=>{assert.throws(()=>createResidualTransform({...head(),species:'dog'}));const h=head();h.a[0]=NaN;assert.throws(()=>createResidualTransform(h));const run=createResidualTransform(head());assert.throws(()=>run([1]));assert.throws(()=>run(Array(512).fill(0)));assert.throws(()=>run(Array(512).fill(Infinity)));});

@@ -1,0 +1,138 @@
+{
+  "reviewedAt": "2026-11-15",
+  "sources": [
+    {
+      "id": "js100",
+      "name": "JS100",
+      "url": "https://www.js100.com/en/site/lost_found",
+      "mode": "auto",
+      "note": "ประกาศสัตว์หาย/พบล่าสุด"
+    },
+    {
+      "id": "ifoundpet",
+      "name": "iFoundPet",
+      "url": "https://ifoundpet.com/announcement",
+      "mode": "auto",
+      "note": "อ่านทั้งหน้าสัตว์หายและหน้าแจ้งพบ"
+    },
+    {
+      "id": "kwanma",
+      "name": "Kwanma",
+      "url": "https://www.kwanma.com/map",
+      "mode": "auto",
+      "note": "ประกาศหายและแจ้งพบ พร้อมพื้นที่"
+    },
+    {
+      "id": "pethubthai",
+      "name": "PetHub Thai",
+      "url": "https://pethubthai.com/",
+      "mode": "auto",
+      "note": "อ่านหน้าแรก ตัดรายการติดป้าย [AI] และตัวอย่างออก"
+    },
+    {
+      "id": "petfindhome",
+      "name": "PetFindHome",
+      "url": "https://petfindhome.com/",
+      "mode": "auto",
+      "note": "เฉพาะหมวดหาย/พบ ไม่รวมประกาศหาบ้าน"
+    },
+    {
+      "id": "foundy",
+      "name": "Foundy",
+      "url": "https://foundy.pet/lost-pets",
+      "mode": "auto",
+      "note": "อ่านภาพประกาศสัตว์หายล่าสุด พร้อมพื้นที่และลิงก์ต้นทาง"
+    },
+    {
+      "id": "dotpet",
+      "name": "DOT PET",
+      "url": "https://www.dotpet.app/lost-pets",
+      "mode": "manual",
+      "note": "หน้าเว็บสาธารณะและแอป ขณะตรวจหน้าเว็บไม่มีประกาศ ยังไม่ได้ต่อ AI"
+    },
+    {
+      "id": "pawground",
+      "name": "Pawground",
+      "url": "https://pawground.co/lost",
+      "mode": "manual",
+      "note": "หน้าแจ้งหาย/พบ ขณะตรวจแสดง 0 ประกาศ ยังไม่ได้ต่อ AI"
+    },
+    {
+      "id": "petio",
+      "name": "Petio",
+      "url": "https://petio.care/social-watch",
+      "mode": "auto",
+      "note": "อ่านประกาศหาย/พบที่มีรูปจากชุมชน Petio เข้า AI อัตโนมัติ"
+    },
+    {
+      "id": "petff",
+      "name": "PetFinder (PetFF)",
+      "url": "https://www.petff.in.th/list/lost",
+      "mode": "auto",
+      "note": "อ่านประกาศสัตว์หายและพบสัตว์จาก PetFF พร้อมรูปและพื้นที่เข้า AI อัตโนมัติ"
+    },
+    {
+      "id": "pawsociety",
+      "name": "Pawsociety",
+      "url": "https://pawsociety.pet/",
+      "mode": "auto",
+      "note": "ดึงประกาศสัตว์หาย/พบ พร้อมโพสต์นำเข้าจากกลุ่ม Facebook และรูปภาพเข้า AI อัตโนมัติ"
+    },
+    {
+      "id": "missingpets",
+      "name": "Missing Pets",
+      "url": "https://play.google.com/store/apps/details?id=com.pet.missingpets",
+      "mode": "app",
+      "note": "เปิดหน้าแอปใน Google Play ยังไม่ได้เชื่อมข้อมูลหรือยืนยันปริมาณประกาศในไทย"
+    },
+    {
+      "id": "line-ifound",
+      "name": "iFoundPet ผ่าน LINE",
+      "url": "https://connect.ifoundpet.com/",
+      "mode": "app",
+      "note": "ช่องทาง LINE ของแหล่งเดิม ไม่ได้นับเป็นฐานประกาศใหม่หรืออ่านแชต LINE"
+    },
+    {
+      "id": "facebook",
+      "name": "Facebook",
+      "url": "https://www.facebook.com/",
+      "mode": "app",
+      "note": "ยังไม่ได้เชื่อมสิทธิ์ Meta ในโปรเจกต์ ไม่ได้ค้นทุกเพจหรือกลุ่มอัตโนมัติ"
+    },
+    {
+      "id": "fm91",
+      "name": "FM91",
+      "url": "https://fm91bkk.com/lostandfound",
+      "mode": "auto",
+      "note": "อ่านข่าวประกาศสัตว์หาย/พบล่าสุด กรองข่าวได้คืนและข่าวที่ไม่ใช่สัตว์ออก"
+    },
+    {
+      "id": "pantip",
+      "name": "Pantip (ห้องจตุจักร)",
+      "url": "https://pantip.com/forum/jatujak",
+      "mode": "auto",
+      "note": "ดึงกระทู้ตามหาสัตว์หาย/พบสัตว์ในห้องจตุจักรที่มีภาพประกอบเข้า AI อัตโนมัติ"
+    },
+    {
+      "id": "birdback",
+      "name": "BirdBack (เพื่อนรักนกของเรา)",
+      "url": "https://tagme.love/lost_birds.php",
+      "mode": "auto",
+      "note": "ศูนย์รวมประกาศนกหายและพบนกพลัดหลงในไทย พร้อมรูป สายพันธุ์ และพื้นที่เข้า AI อัตโนมัติ"
+    },
+    {
+      "id": "lostbirdthailand",
+      "name": "หานก.com (Lost Bird Thailand)",
+      "url": "https://lostbirdthailand.com/",
+      "mode": "manual",
+      "note": "ชุมชนศูนย์รวมข้อมูลและแผนที่นกหายในไทย เปิดค้นต่อเพิ่มเติม"
+    },
+    {
+      "id": "thaipbs",
+      "name": "ThaiPBS (ข่าวสัตว์หาย)",
+      "url": "https://www.thaipbs.or.th/search?q=%E0%B8%AA%E0%B8%B1%E0%B8%95%E0%B8%A7%E0%B9%8C%E0%B9%80%E0%B8%A5%E0%B8%B5%E0%B9%89%E0%B8%A2%E0%B8%87%E0%B8%AB%E0%B8%B2%E0%B8%A2",
+      "mode": "manual",
+      "note": "เว็บไซต์ข่าว ThaiPBS สำหรับค้นข่าวหรือกรณีตามหาสัตว์ที่เป็นข่าวสาธารณะ"
+    }
+  ]
+}

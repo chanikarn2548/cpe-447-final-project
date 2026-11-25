@@ -1,0 +1,41 @@
+{
+  "release": "oxford37-full-v4",
+  "selection": "strict validation top1; both inspected and remaining test checked for regressions",
+  "epochs": 200,
+  "selectedEpoch": 6,
+  "counts": {
+    "train": 3495,
+    "val": 185,
+    "test": 1480
+  },
+  "previousValidation": 0.9459459459459459,
+  "validation": 0.9567567567567568,
+  "previousTest": 0.9486486486486486,
+  "test": 0.9554054054054054,
+  "previousTop3": 0.9851351351351352,
+  "top3": 0.9885135135135135,
+  "remainingTest": {
+    "old": {
+      "n": 2189,
+      "top1": 2053,
+      "top3": 2155
+    },
+    "candidate": {
+      "n": 2189,
+      "top1": 2080,
+      "top3": 2167
+    }
+  },
+  "dataSource": {
+    "url": "https://www.robots.ox.ac.uk/~vgg/data/pets/",
+    "license": "CC BY-SA 4.0",
+    "attribution": "Parkhi, Vedaldi, Zisserman, Jawahar. Cats and Dogs. CVPR 2012."
+  },
+  "limitations": [
+    "All available official train images except validation,5 validation,40 test images per breed; not a real-world evaluation.",
+    "Backbone was pretrained on pet datasets; overlap with Oxford is not audited.",
+    "No identity labels: this does not measure individual animal matching.",
+    "No bird/rabbit/hamster, mixed-breed or unknown-image evaluation.",
+    "No animal detector crop yet. Exact duplicate removal does not remove all near duplicates."
+  ]
+}

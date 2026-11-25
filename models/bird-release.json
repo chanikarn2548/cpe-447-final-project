@@ -1,0 +1,42 @@
+{
+  "release": "bird24-v2",
+  "selectedConfig": "5fold-resmlp-h192-nomix",
+  "backbone": "dinov2-small q4 frozen + bird crop + horizontal-flip TTA + 5-fold residual MLP",
+  "speciesCount": 24,
+  "counts": {
+    "trainRows": 2160,
+    "val": 120,
+    "test": 240
+  },
+  "bestEpoch": 7,
+  "validation": 0.925,
+  "validationSingle": 0.9167000000000001,
+  "previousTestTop1": 0.825,
+  "testTop1Single": 0.8833,
+  "testTop1Tta": 0.8917,
+  "testTop3Tta": 0.9208,
+  "testFullTop1": 0.8542000000000001,
+  "sampleBirdPrediction": [
+    {
+      "label": "japanese_quail",
+      "thai": "นกกระทาญี่ปุ่น"
+    },
+    {
+      "label": "zebra_dove",
+      "thai": "นกเขาชวา"
+    },
+    {
+      "label": "domestic_canary",
+      "thai": "นกคีรีบูน"
+    }
+  ],
+  "dataSource": {
+    "url": "https://api.inaturalist.org",
+    "attribution": "iNaturalist contributors (Research-grade & curated bird observations)"
+  },
+  "limitations": [
+    "Covers 24 common pet and Thai urban bird species; rare or exotic morphs/mutations or unlisted wild birds map to nearest species.",
+    "Not individual bird re-identification; confirms species/breed category only."
+  ],
+  "fiveFoldOOF": 0.9005
+}

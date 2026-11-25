@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffca32">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icon-pawtal.svg" type="image/svg+xml">
+  <title>Pawtal · ห้องตรวจจับ AI 5 ชนิด &amp; พื้นที่ 5 มุม</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="readable-ui.css">
+  <link rel="stylesheet" href="detect.css">
+</head>
+<body>
+  <header class="wrap topbar" id="top">
+    <a class="brand" href="/"><span class="brand-icon">🐾</span><span>Pawtal<small>พอลทัล · ประตูเชื่อมเบาะแสสัตว์เลี้ยง</small></span></a>
+    <nav><a href="/#cases">ประกาศหาย / พบ</a><a href="/#tracking">เบาะแสของฉัน</a><a href="sources.html">แหล่งประกาศ 12 เว็บ</a></nav>
+    <div class="top-actions"><a class="btn btn-light" href="/">← กลับหน้าค้นหาหลัก</a></div>
+  </header>
+
+  <main class="detect-wrap">
+    <section class="detect-hero">
+      <div>
+        <span class="badge">AI OBJECT DETECTION · 5 ชนิดสัตว์เลี้ยง</span>
+        <h1>ห้องทดลองตรวจจับสัตว์ 5 ชนิด &amp; เฝ้าระวังพื้นที่</h1>
+        <p>ส่งรูปภาพ วิดีโอ หรือเปิดกล้องเพื่อให้ AI ตีกรอบหาตัวสัตว์ (<b>แมว · สุนัข · นก · กระต่าย · แฮมสเตอร์</b>) พร้อมจำลองขีดเขตพื้นที่ 5 มุมดูว่าน้องอยู่ <b>ในเขต (IN)</b> หรือ <b>ออกนอกเขต (OUT)</b></p>
+      </div>
+      <div id="modelStatus" class="status-pill" role="status">กำลังตรวจสถานะโมเดล…</div>
+    </section>
+
+    <section class="studio-grid" aria-label="พื้นที่ทำงานห้องตรวจจับ AI">
+      <!-- ฝั่งซ้าย: รูปภาพตัวอย่างลัด + Canvas + ผลลัพธ์อ่านง่าย -->
+      <div class="studio-stage">
+        <div class="sample-strip">
+          <small>ลองกดดูตัวอย่างทันที:</small>
+          <button type="button" class="sample-btn active" data-sample="user-cat">🌟 แมวส้ม</button>
+          <button type="button" class="sample-btn" data-sample="cat">🐱 แมว</button>
+          <button type="button" class="sample-btn" data-sample="dog">🐶 สุนัข</button>
+          <button type="button" class="sample-btn" data-sample="bird">🐦 นก</button>
+          <button type="button" class="sample-btn" data-sample="rabbit">🐰 กระต่าย</button>
+          <button type="button" class="sample-btn" data-sample="hamster">🐹 แฮมสเตอร์</button>
+        </div>
+
+        <div class="canvas-stage">
+          <div class="canvas-toolbar">
+            <p id="hint">กำลังโหลดตัวอย่างแรกให้ชมอัตโนมัติ…</p>
+            <p id="message" role="status"></p>
+          </div>
+          <canvas id="canvas" width="960" height="560" aria-label="รูปสัตว์ กรอบ AI และพื้นที่ 5 มุม"></canvas>
+          <video id="liveVideo" muted playsinline style="display:none"></video>
+        </div>
+
+        <div class="result-banner">
+          <div class="result-banner-top">
+            <div>
+              <span class="result-label">ผลการวิเคราะห์จาก AI</span>
+              <div id="results" class="summary-value">กำลังเตรียมผลตรวจจับ…</div>
+              <div id="breedResult" class="breed-pill" hidden></div>
+            </div>
+            <div class="tools" style="gap:6px">
+              <button id="saveImage" type="button" class="studio-btn">📸 บันทึกรูปผล (.png)</button>
+              <button id="searchFromDetect" type="button" class="studio-btn btn-primary-detect">🔎 ค้นหาใน 12 เว็บจากรูปนี้ →</button>
+            </div>
+          </div>
+          <div id="zoneAlertLog" class="zone-alert-log" aria-live="polite"></div>
+          <div class="legend-strip">
+            <span><i style="background:#088247"></i> กรอบเขียว = อยู่ในเขต (IN)</span>
+            <span><i style="background:#cd3434"></i> กรอบแดง = ออกนอกเขต (OUT)</span>
+            <span><i style="background:#e79a00"></i> เส้นส้ม = เขต 5 มุม (ลากมุม 1–5 ปรับได้)</span>
+            <span><i style="background:#2058d4"></i> กรอบน้ำเงิน = Label สอน AI</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ฝั่งขวา: แยกแท็บ ใช้งานจริง vs โหมดนักพัฒนา (สอน AI) -->
+      <aside class="studio-controls" aria-label="แผงควบคุม">
+        <div class="studio-tabs" role="tablist">
+          <button type="button" class="studio-tab active" data-studio-tab="use" role="tab" aria-selected="true">🔍 สแกน &amp; เฝ้าระวังพื้นที่</button>
+          <button type="button" class="studio-tab" data-studio-tab="train" role="tab" aria-selected="false">🎓 โหมดสอน AI (Label)</button>
+        </div>
+
+        <!-- โหมด 1: ใช้งานจริง เข้าใจง่าย 2 ขั้นตอน -->
+        <div id="tabUse" class="tools" style="flex-direction:column;align-items:stretch;gap:12px">
+          <article class="control-block">
+            <div class="block-head">
+              <div class="block-title"><span class="step-num">ขั้นที่ 1</span><b>เลือกรูป / วิดีโอ / กล้องสด</b></div>
+            </div>
+            <p class="block-desc">เมื่ออัปโหลดรูป ระบบจะสแกนหาตัวสัตว์ให้อัตโนมัติทันที หรือเลือกคลิปวิดีโอ/กล้องเพื่อทดสอบเฝ้าระวังต่อเนื่อง</p>
+            <div class="tools">
+              <label class="file-upload-btn">🖼️ อัปโหลดรูปภาพ <input id="photos" type="file" accept="image/*" multiple></label>
+              <label class="file-upload-btn video-upload-btn">🎥 เลือกวิดีโอ <input id="videoFile" type="file" accept="video/*"></label>
+              <button type="button" id="demoWalkVideo" class="studio-btn video-upload-btn">🎬 วิดีโอสาธิตสัตว์เดินข้ามเขต</button>
+              <button type="button" id="toggleCam" class="studio-btn preset-btn">📷 กล้องสด / CCTV</button>
+              <button type="button" id="detect" class="studio-btn btn-primary-detect">🤖 สแกนอีกครั้ง</button>
+            </div>
+            <div id="imagePickerRow" hidden>
+              <label class="select-field">ไฟล์ที่กำลังดู <select id="imageList"></select></label>
+            </div>
+            <div id="streamControls" class="tools" hidden>
+              <button type="button" id="toggleScanLoop" class="studio-btn btn-primary-detect">⏸️ หยุดสแกนอัตโนมัติ</button>
+              <button type="button" id="captureStreamFrame" class="studio-btn">📸 แคปเฟรมนี้เป็นรูป</button>
+            </div>
+          </article>
+
+          <article class="control-block">
+            <div class="block-head">
+              <div class="block-title"><span class="step-num">ขั้นที่ 2</span><b>กำหนดพื้นที่เฝ้าระวัง 5 มุม</b></div>
+              <span id="zoneProgress" class="zone-progress">วางแล้ว 0 / 5 มุม</span>
+            </div>
+            <p class="block-desc">ลองกดปุ่มจำลอง หรือลากจุดมุม <b>1–5</b> บนรูปได้เลยทันที! หากต้องการวาดใหม่ให้กด “วาง 5 มุมเอง”</p>
+            <div class="tools">
+              <button type="button" id="presetZoneIn" class="studio-btn preset-btn">✓ ลอง “อยู่ในเขต (IN)”</button>
+              <button type="button" id="presetZoneOut" class="studio-btn" style="background:#fff0f2;border-color:#efc2cb;color:#8e2f3d">✕ ลอง “ออกนอกเขต (OUT)”</button>
+              <button type="button" id="zoneMode" class="studio-btn">📐 คลิกวาง 5 มุมเอง</button>
+              <button type="button" id="undo" class="studio-btn">↩ ย้อน 1 จุด</button>
+              <button type="button" id="clearZone" class="studio-btn">ล้างเส้น</button>
+            </div>
+            <label class="sound-toggle"><input type="checkbox" id="soundAlertToggle" checked> 🔔 ส่งเสียงเตือนเบาๆ เมื่อสัตว์ออกนอกเขต (OUT)</label>
+          </article>
+        </div>
+
+        <!-- โหมด 2: สำหรับคนสอน AI / สร้าง Dataset (ซ่อนความซับซ้อนจากผู้ใช้ทั่วไป) -->
+        <div id="tabTrain" class="tools" style="flex-direction:column;align-items:stretch;gap:12px" hidden>
+          <article class="control-block">
+            <div class="block-head">
+              <div class="block-title"><span class="step-num">สอน AI</span><b>ลากกรอบติดป้ายกำกับ (Label)</b></div>
+            </div>
+            <p class="block-desc">ใช้สำหรับเตรียมข้อมูลสอนโมเดล: เลือกชนิดสัตว์ด้านล่าง แล้วคลิกลากกรอบสี่เหลี่ยมครอบตัวสัตว์บนภาพทางซ้าย</p>
+            <label class="select-field">ชนิดสัตว์ที่จะลากกรอบ <select id="animal"><option value="0">🐱 แมว (cat)</option><option value="1">🐶 สุนัข (dog)</option><option value="2">🐦 นก (bird)</option><option value="3">🐰 กระต่าย (rabbit)</option><option value="4">🐹 แฮมสเตอร์ (hamster)</option></select></label>
+            <div class="tools">
+              <button type="button" id="labelMode" class="studio-btn">✏️ เปิดโหมดลากกรอบ</button>
+              <button type="button" id="undoLabelBtn" class="studio-btn">↩ ลบกรอบล่าสุด</button>
+            </div>
+            <div id="labels" class="manual-labels-pill">ยังไม่มี Label</div>
+          </article>
+
+          <article class="control-block">
+            <div class="block-head">
+              <div class="block-title"><span class="step-num">Dataset</span><b>ส่งออกข้อมูลไปฝึกบน Colab</b></div>
+            </div>
+            <div class="tools">
+              <button id="export" type="button" class="studio-btn btn-primary-detect">📦 ส่งออกชุดข้อมูล (.json)</button>
+              <a class="colab-link" href="training/train_pets5.ipynb" download>📓 train_pets5.ipynb</a>
+              <a class="colab-link" href="training/train_pets5_openimages.ipynb" download>📓 OpenImages Colab</a>
+            </div>
+          </article>
+        </div>
+      </aside>
+    </section>
+
+    <details class="project-info-drawer video-guide-section" aria-label="ข้อมูลสำหรับเปิดอธิบายในวิดีโอส่งงาน">
+      <summary>📊 รายละเอียดทางวิชาการ: ชุดข้อมูล (Dataset) · Data Augmentation · และกราฟผลการ Train (คลิกเพื่อเปิดอ่าน)</summary>
+      <div class="drawer-body">
+        <div class="drawer-links" style="margin-bottom:12px">
+          <a class="colab-link" href="slides.html">📑 เปิดสไลด์สรุปโปรเจกต์ 23 หน้า (slides.html)</a>
+          <a class="colab-link" href="training/train_pets5.ipynb" download>📓 ดาวน์โหลดไฟล์ Colab (train_pets5.ipynb)</a>
+          <a class="colab-link" href="training/train_pets5_openimages.ipynb" download>📓 ไฟล์ Colab OpenImages</a>
+        </div>
+        <div class="rubric-grid">
+          <div class="rubric-box">
+            <h3>1. ชุดข้อมูลฝึกสอน (Dataset) &amp; Label</h3>
+            <ul>
+              <li><b>Dataset:</b> รูปสัตว์ทั้ง 5 ชนิด แบ่ง Train 508 / Val 75 / Test 75 ภาพ ป้องกันภาพซ้ำข้ามชุด</li>
+              <li><b>Bounding Box Label:</b> ตีกรอบรอบตัวสัตว์พร้อมระบุคลาส 0–4</li>
+            </ul>
+            <a href="assets/training-proof/labels.jpg" target="_blank"><img src="assets/training-proof/labels.jpg" alt="กราฟสัดส่วน Dataset และขนาดกรอบ Bounding Box ทั้ง 5 คลาส"></a>
+          </div>
+          <div class="rubric-box">
+            <h3>2. Data Augmentation &amp; การ Train</h3>
+            <ul>
+              <li><b>YOLO11n + DINOv2:</b> ฝึก <code>YOLO11n</code> ที่ <code>640×640</code> ร่วมกับ <code>DINOv2</code></li>
+              <li><b>Augmentation:</b> Mosaic, Flip, Color Jitter และ Scale</li>
+            </ul>
+            <a href="assets/training-proof/train_batch0.jpg" target="_blank"><img src="assets/training-proof/train_batch0.jpg" alt="ตัวอย่างภาพที่ผ่านการทำ Data Augmentation ตอนเทรน"></a>
+          </div>
+          <div class="rubric-box">
+            <h3>3. ความแม่นยำในการสแกน</h3>
+            <ul>
+              <li><b>mAP50 = 90.56%</b> (แมว 93.7%, สุนัข 91.8%, นก 90.4%, กระต่าย 84.8%, แฮมสเตอร์ 92.2%)</li>
+              <li><b>Recall = 87.65%</b> มองเห็นสัตว์และจำแนกคลาสแม่นยำ</li>
+            </ul>
+            <a href="assets/training-proof/results.png" target="_blank"><img src="assets/training-proof/results.png" alt="กราฟ Loss และ mAP50 ระหว่างการเทรน"></a>
+          </div>
+        </div>
+      </div>
+    </details>
+  </main>
+  <script type="module" src="detect.js"></script>
+</body>
+</html>

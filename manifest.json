@@ -1,0 +1,40 @@
+{
+  "name": "Pawtal (พอลทัล) — AI ตามหาสัตว์เลี้ยงหาย",
+  "short_name": "Pawtal",
+  "description": "ระบบ AI ค้นหาสัตว์เลี้ยงหายด้วยภาพ เทียบ 12 แหล่งประกาศสาธารณะและกลุ่มชุมชน พร้อมแผนที่พื้นที่และสร้างโปสเตอร์ QR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#ffca32",
+  "background_color": "#fffdf7",
+  "lang": "th",
+  "icons": [
+    {
+      "src": "assets/icon-pawtal.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "ค้นหาน้องจากรูป",
+      "short_name": "ค้นหา AI",
+      "url": "/?action=lost",
+      "description": "ส่งรูปสัตว์เลี้ยงเพื่อสแกนหาเบาะแสทันที"
+    },
+    {
+      "name": "แจ้งพบสัตว์พลัดหลง",
+      "short_name": "แจ้งพบ",
+      "url": "/?action=found",
+      "description": "ถ่ายรูปและแจ้งเบาะแสสัตว์ที่พบเห็นข้างทาง"
+    },
+    {
+      "name": "ห้องตรวจจับ AI 5 ชนิด",
+      "short_name": "AI Lab",
+      "url": "/detect.html",
+      "description": "ทดสอบตรวจจับหมา แมว นก กระต่าย แฮมสเตอร์"
+    }
+  ]
+}
